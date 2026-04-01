@@ -3,6 +3,16 @@
 # Python 3.10+, install requests: pip install requests
 # Replace THEGAMESDB_API_KEY with your key.
 
+#example data to add 
+# # Rayman(SNES) 
+# # Shanghai II: Dragon's Eye (SNES) 
+# # San Goku Shi III (SNES) 
+# # The Legend of Zelda : Mirror of Worlds(NES) 
+# # Splatterworld (NES) # Snow Bros. (NES) 
+# # Sonic 1 Remastered (SEGA GENESIS) 
+# # Addams Family Values (SEGA GENESIS) 
+# #Aero the Acro-Bat (SEGA GENESIS)
+
 import tkinter as tk
 from tkinter import ttk, messagebox
 import requests, threading, sqlite3, time, webbrowser, os, datetime, json
