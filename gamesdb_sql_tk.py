@@ -8,7 +8,7 @@ from tkinter import ttk, messagebox
 import requests, threading, sqlite3, time, webbrowser, json
 
 #GamesDB.net information stuff
-THEGAMESDB_API_KEY = "7a5185043b9c80de440a54ba097dd8a107de762bdd7d7977990b1be306a3e830"  # replace
+THEGAMESDB_API_KEY = "7a5185043b9c80de440a54ba097dd8a107de762bdd7d7977990b1be306a3e830"
 BASE = "https://api.thegamesdb.net"
 DB_FILE = "gamesdb_cache.db"
 CACHE_TTL_SECONDS = 7 * 24 * 3600  # 7 days
