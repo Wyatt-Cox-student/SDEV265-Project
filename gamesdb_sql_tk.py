@@ -16,16 +16,17 @@ CACHE_TTL_SECONDS = 7 * 24 * 3600  # 7 days
 # ----- Example static games list (NES/SNES/Genesis) -----
 #add year, genre, other information
 STATIC_GAMES = [
-    ("Rayman", "SNES"),
-    ("Shanghai II: Dragon's Eye", "SNES"),
-    ("San Goku Shi III", "SNES"),
-    ("The Legend of Zelda: Mirror of Worlds", "NES"),
-    ("Splatterworld", "NES"),
-    ("Snow Bros.", "NES"),
-    ("Sonic 1 Remastered", "SEGA Genesis"),
-    ("Addams Family Values", "SEGA Genesis"),
-    ("Aero the Acro-Bat", "SEGA Genesis")
+    ("Rayman", "SNES", 2017, "Adventure"),
+    ("Shanghai II: Dragon's Eye", "SNES", 1992, "Puzzle"),
+    ("San Goku Shi III", "SNES", 1993, "Strategy"),
+    ("The Legend of Zelda: Mirror of Worlds", "NES", 2025, "Adventure"),
+    ("Splatterworld", "NES", 1993, "Role-Playing"),
+    ("Snow Bros.", "NES", 1990, "Platform"),
+    ("Sonic 1 Remastered", "SEGA Genesis", 2007, "Platform"),
+    ("Addams Family Values", "SEGA Genesis", 1994, "Role-Playing"),
+    ("Aero the Acro-Bat", "SEGA Genesis", 1993, "Platform")
 ]
+
 
 # ----- Database helpers -----
 #creates or opens the SQLite DB and ensure tables exist.
