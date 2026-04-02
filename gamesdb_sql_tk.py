@@ -213,7 +213,7 @@ class App(tk.Tk):
     # and show a placeholder detail for the games.
     def populate_static_games(self):
         self.results_list.delete(0, 'end')
-        self.results = [{"game_title": g[0], "platform": g[1]} for g in STATIC_GAMES]
+        self.results = [{"game_title": g[0]} for g in STATIC_GAMES]
         for g in STATIC_GAMES:
             self.results_list.insert('end', g[0])
         if self.results:
@@ -256,8 +256,7 @@ class App(tk.Tk):
         self.results_list.delete(0, 'end')
         for g in results:
             title = g.get("game_title") or g.get("title") or "Untitled"
-            platform = g.get("platform") or g.get("platforms") or ""
-            display = f"{title} ({platform})" if platform else title
+            display = f"{title}"
             self.results_list.insert('end', display)
         self.set_status(f"{len(results)} result(s) {'(cache)' if from_cache else ''}")
 # update the status label.
