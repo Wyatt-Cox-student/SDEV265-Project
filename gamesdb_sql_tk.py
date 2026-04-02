@@ -13,6 +13,7 @@ DB_FILE = "gamesdb_cache.db"
 CACHE_TTL_SECONDS = 7 * 24 * 3600  # 7 days
 
 # ----- Example static games list (NES/SNES/Genesis) -----
+#add year, genre, other information
 STATIC_GAMES = [
     ("Rayman", "SNES"),
     ("Shanghai II: Dragon's Eye", "SNES"),
