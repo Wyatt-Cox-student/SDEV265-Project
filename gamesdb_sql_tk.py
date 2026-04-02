@@ -26,6 +26,7 @@ STATIC_GAMES = [
 ]
 
 # ----- Database helpers -----
+#creates or opens the SQLite DB and ensure tables exist.
 def init_db():
     con = sqlite3.connect(DB_FILE)
     cur = con.cursor()
@@ -52,7 +53,7 @@ def init_db():
     """)
     con.commit()
     con.close()
-
+# fetch cached game JSON and updated timestamp for a game id, or None if missing.
 def db_get_game(game_id):
     con = sqlite3.connect(DB_FILE)
     cur = con.cursor()
@@ -63,6 +64,7 @@ def db_get_game(game_id):
         return None
     return {"data": json.loads(row[0]), "updated_at": row[1]}
 
+#store/replace a game's JSON and updated timestamp and replace its image rows.
 def db_save_game(game_id, game_data, images):
     con = sqlite3.connect(DB_FILE)
     cur = con.cursor()
@@ -76,7 +78,7 @@ def db_save_game(game_id, game_data, images):
             cur.execute("INSERT OR IGNORE INTO images(game_id, url) VALUES (?, ?)", (game_id, url))
     con.commit()
     con.close()
-
+#return a list of image URLs for a given game_id from the images table.
 def db_get_images(game_id):
     con = sqlite3.connect(DB_FILE)
     cur = con.cursor()
@@ -85,6 +87,7 @@ def db_get_images(game_id):
     con.close()
     return [r[0] for r in rows]
 
+#fetch cached search results JSON and updated timestamp for query q, or None if missing.
 def db_get_search(q):
     con = sqlite3.connect(DB_FILE)
     cur = con.cursor()
@@ -95,6 +98,7 @@ def db_get_search(q):
         return None
     return {"results": json.loads(row[0]), "updated_at": row[1]}
 
+#store/replace search results JSON and updated timestamp for query q.
 def db_save_search(q, results):
     con = sqlite3.connect(DB_FILE)
     cur = con.cursor()
@@ -105,6 +109,8 @@ def db_save_search(q, results):
     con.close()
 
 # ----- TheGamesDB API calls -----
+#perform an HTTP GET to TheGamesDB API endpoint with API key, 
+#return parsed JSON (raises on HTTP error)
 def call_tgdb(endpoint, params=None):
     headers = {"Accept": "application/json"}
     if params is None:
@@ -113,14 +119,17 @@ def call_tgdb(endpoint, params=None):
     resp = requests.get(f"{BASE}{endpoint}", params=params, headers=headers, timeout=10)
     resp.raise_for_status()
     return resp.json()
-
+# call the Games/ByGameName endpoint 
+#and return a list of game dicts (handles dict or list shape).
 def search_remote(q):
     data = call_tgdb("/Games/ByGameName", params={"name": q})
     games = data.get("data", {}).get("games") or []
     if isinstance(games, dict):
         games = [v for v in games.values()]
     return games
-
+#call Games/ByGameId, extract the single game dict and 
+#build a list of full image URLs 
+#(returns (game, images_list) where images_list items are {"url": ...}).
 def get_game_remote(game_id):
     data = call_tgdb("/Games/ByGameId", params={"id": game_id})
     games = data.get("data", {}).get("games", {}) or {}
@@ -146,20 +155,23 @@ def get_game_remote(game_id):
     return game, images_full
 
 # ----- Worker wrappers (threaded) -----
+#decorator that runs the wrapped function in a daemon Thread (fire-and-forget).
 def threaded(func):
     def wrapper(*a, **kw):
         threading.Thread(target=lambda: func(*a, **kw), daemon=True).start()
     return wrapper
 
 # ----- Tkinter GUI -----
+#main Tkinter application window that initializes UI, DB and holds state and methods
 class App(tk.Tk):
+    #set window, init DB and create widgets.
     def __init__(self):
         super().__init__()
         self.title("GamesDB Search (NES / SNES / Genesis)")
         self.geometry("1200x800")
         init_db()
         self.create_widgets()
-
+#build the search entry, buttons, status, results list, detail pane, and bind events.
     def create_widgets(self):
         top = ttk.Frame(self)
         top.pack(fill="x", padx=8, pady=8)
@@ -199,6 +211,8 @@ class App(tk.Tk):
         self.populate_static_games()  # show static NES/SNES/Genesis games on start
 
     # ----- Populate static games -----
+    #populate results with the bundled STATIC_GAMES 
+    # and show a placeholder detail for the games.
     def populate_static_games(self):
         self.results_list.delete(0, 'end')
         self.results = [{"game_title": g[0], "platform": g[1]} for g in STATIC_GAMES]
@@ -215,6 +229,8 @@ class App(tk.Tk):
 
     # ----- Search -----
     @threaded
+    #perform a search: 
+    #use cache if fresh, otherwise call search_remote and save to DB, then populate results.
     def search(self):
         q = self.qvar.get().strip()
         if not q:
@@ -238,7 +254,9 @@ class App(tk.Tk):
                     self.error(e)
                     return
         self.after(0, lambda: self.populate_results(results, from_cache=use_cache))
-
+#update the results Listbox and status text from a results list.
+# (Clear search/filter not added yet)
+#(search/filter by console, year, genre and other info not added yet)
     def populate_results(self, results, from_cache=False):
         self.results = results
         self.results_list.delete(0, 'end')
@@ -248,14 +266,16 @@ class App(tk.Tk):
             display = f"{title} ({platform})" if platform else title
             self.results_list.insert('end', display)
         self.set_status(f"{len(results)} result(s) {'(cache)' if from_cache else ''}")
-
+# update the status label.
     def set_status(self, text):
         self.status.config(text=text)
-
+# if something goes wrong show an error dialog and set status to "Error".
     def error(self, exc):
         self.after(0, lambda: messagebox.showerror("Error", str(exc)))
         self.set_status("Error")
-
+# handle selecting a result: 
+#if static (no id) show placeholder;
+#else use cached game if fresh or start fetch_and_show thread.(in progress)
     def on_select(self, evt):
         sel = self.results_list.curselection()
         if not sel:
@@ -287,6 +307,7 @@ class App(tk.Tk):
             self.set_status("Loading details...")
             threading.Thread(target=self.fetch_and_show, args=(game_id,), daemon=True).start()
 
+#fetch game and images remotely, save to DB, then show detail on main thread.
     def fetch_and_show(self, game_id):
         try:
             game, images = get_game_remote(game_id)
@@ -295,14 +316,14 @@ class App(tk.Tk):
             self.after(0, lambda: self.show_detail(game, images_urls))
         except Exception as e:
             self.error(e)
-
+#background refresh of a game's remote data and save to DB (errors ignored).
     def refresh_game_if_needed(self, game_id):
         try:
             game, images = get_game_remote(game_id)
             db_save_game(game_id, game, images)
         except Exception:
             pass
-
+#populate title, meta, overview text and images list with provided game dict and image URLs.
     def show_detail(self, game, images):
         title = game.get("game_title") or game.get("title") or "Untitled"
         platform = game.get("platform") or game.get("platforms") or ""
@@ -323,7 +344,8 @@ class App(tk.Tk):
         for url in (images or []):
             self.images_list.insert('end', url or "(no-url)")
         self.set_status("Ready")
-
+        
+#open the selected image URL in the default web browser.
     def open_image(self, evt):
         sel = self.images_list.curselection()
         if not sel:
