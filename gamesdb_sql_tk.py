@@ -14,9 +14,9 @@ DB_FILE = "gamesdb_cache.db"
 CACHE_TTL_SECONDS = 7 * 24 * 3600  # 7 days
 
 # ----- Example static games list (NES/SNES/Genesis) -----
-#Remove when able to pull from TheGamesDB.net and store it in template?
+#Remove all or remove everything but name from code when able to pull from TheGamesDB.net and store it in template?
 STATIC_GAMES = [
-    ("Rayman"),
+    ("Rayman", "SNES", 2017, "Adventure"),
     ("Shanghai II: Dragon's Eye", "SNES", 1992, "Puzzle"),
     ("San Goku Shi III", "SNES", 1993, "Strategy"),
     ("The Legend of Zelda: Mirror of Worlds", "NES", 2025, "Adventure"),
