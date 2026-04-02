@@ -7,6 +7,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import requests, threading, sqlite3, time, webbrowser, json
 
+#GamesDB.net information stuff
 THEGAMESDB_API_KEY = "7a5185043b9c80de440a54ba097dd8a107de762bdd7d7977990b1be306a3e830"  # replace
 BASE = "https://api.thegamesdb.net"
 DB_FILE = "gamesdb_cache.db"
@@ -64,7 +65,6 @@ def db_get_game(game_id):
     if not row:
         return None
     return {"data": json.loads(row[0]), "updated_at": row[1]}
-
 #store/replace a game's JSON and updated timestamp and replace its image rows.
 def db_save_game(game_id, game_data, images):
     con = sqlite3.connect(DB_FILE)
@@ -87,7 +87,6 @@ def db_get_images(game_id):
     rows = cur.fetchall()
     con.close()
     return [r[0] for r in rows]
-
 #fetch cached search results JSON and updated timestamp for query q, or None if missing.
 def db_get_search(q):
     con = sqlite3.connect(DB_FILE)
@@ -98,7 +97,6 @@ def db_get_search(q):
     if not row:
         return None
     return {"results": json.loads(row[0]), "updated_at": row[1]}
-
 #store/replace search results JSON and updated timestamp for query q.
 def db_save_search(q, results):
     con = sqlite3.connect(DB_FILE)
@@ -209,9 +207,8 @@ class App(tk.Tk):
         self.images_list.bind("<Double-Button-1>", self.open_image)
 
         self.results = []
-        self.populate_static_games()  # show static NES/SNES/Genesis games on start
-
-    # ----- Populate static games -----
+        self.populate_static_games()
+ # ----- Populate static games -----
     #populate results with the bundled STATIC_GAMES 
     # and show a placeholder detail for the games.
     def populate_static_games(self):
@@ -220,17 +217,15 @@ class App(tk.Tk):
         for g in STATIC_GAMES:
             self.results_list.insert('end', g[0])
         if self.results:
-            name, console = STATIC_GAMES[0]
-            self.title_lbl.config(text=name)
-            self.meta_lbl.config(text=f"Console: {console} | Data goes here")
             self.overview.config(state="normal")
             self.overview.delete("1.0", "end")
             self.overview.insert("1.0", "Data goes here")
             self.overview.config(state="disabled")
-
-    # ----- Search -----
+ # ----- Search -----
+ # (Clear search/filter not added yet)
+#(search/filter by console, year, genre and other info not added yet)
     @threaded
-    #perform a search: 
+        #perform a search: 
     #use cache if fresh, otherwise call search_remote and save to DB, then populate results.
     def search(self):
         q = self.qvar.get().strip()
@@ -256,8 +251,6 @@ class App(tk.Tk):
                     return
         self.after(0, lambda: self.populate_results(results, from_cache=use_cache))
 #update the results Listbox and status text from a results list.
-# (Clear search/filter not added yet)
-#(search/filter by console, year, genre and other info not added yet)
     def populate_results(self, results, from_cache=False):
         self.results = results
         self.results_list.delete(0, 'end')
@@ -274,9 +267,9 @@ class App(tk.Tk):
     def error(self, exc):
         self.after(0, lambda: messagebox.showerror("Error", str(exc)))
         self.set_status("Error")
-# handle selecting a result: 
+# handle selecting a result: (in progress)
 #if static (no id) show placeholder;
-#else use cached game if fresh or start fetch_and_show thread.(in progress)
+#else use cached game if fresh or start fetch_and_show thread.
     def on_select(self, evt):
         sel = self.results_list.curselection()
         if not sel:
@@ -284,12 +277,8 @@ class App(tk.Tk):
         idx = sel[0]
         g = self.results[idx]
         game_id = g.get("id") or g.get("game_id") or g.get("gameId")
+
         if not game_id:
-            # static game: just show placeholder
-            title = g.get("game_title") or g.get("title") or "Untitled"
-            platform = g.get("platform") or ""
-            self.title_lbl.config(text=title)
-            self.meta_lbl.config(text=f"Console: {platform} | Data goes here")
             self.overview.config(state="normal")
             self.overview.delete("1.0", "end")
             self.overview.insert("1.0", "Data goes here")
@@ -307,7 +296,6 @@ class App(tk.Tk):
         else:
             self.set_status("Loading details...")
             threading.Thread(target=self.fetch_and_show, args=(game_id,), daemon=True).start()
-
 #fetch game and images remotely, save to DB, then show detail on main thread.
     def fetch_and_show(self, game_id):
         try:
@@ -336,16 +324,17 @@ class App(tk.Tk):
         if release: meta.append(f"Release: {release}")
         if players: meta.append(f"Players: {players}")
         self.meta_lbl.config(text=" • ".join(meta))
+
         overview = game.get("overview") or game.get("description") or ""
         self.overview.config(state="normal")
         self.overview.delete("1.0", "end")
         self.overview.insert("1.0", overview)
         self.overview.config(state="disabled")
+
         self.images_list.delete(0, 'end')
         for url in (images or []):
             self.images_list.insert('end', url or "(no-url)")
         self.set_status("Ready")
-        
 #open the selected image URL in the default web browser.
     def open_image(self, evt):
         sel = self.images_list.curselection()
