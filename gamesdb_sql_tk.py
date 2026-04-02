@@ -166,7 +166,7 @@ class App(tk.Tk):
     #set window, init DB and create widgets.
     def __init__(self):
         super().__init__()
-        self.title("GamesDB Search (NES / SNES / Genesis)")
+        self.title("Classic Game Database")
         self.geometry("1200x800")
         init_db()
         self.create_widgets()
