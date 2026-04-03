@@ -119,6 +119,7 @@ def call_tgdb(endpoint, params=None):
     resp = requests.get(f"{BASE}{endpoint}", params=params, headers=headers, timeout=10)
     resp.raise_for_status()
     return resp.json()
+
 # call the Games/ByGameName endpoint 
 #and return a list of game dicts (handles dict or list shape).
 def search_remote(q):
@@ -171,6 +172,7 @@ class App(tk.Tk):
         self.geometry("1200x800")
         init_db()
         self.create_widgets()
+
 #build the search entry, buttons, status, results list, detail pane, and bind events.
     def create_widgets(self):
         top = ttk.Frame(self)
@@ -180,7 +182,9 @@ class App(tk.Tk):
         entry = ttk.Entry(top, textvariable=self.qvar, width=50)
         entry.pack(side="left", padx=6)
         entry.bind("<Return>", lambda e: self.search())
+        entry.bind("<Escape>", lambda e: self.clear_search())                 # Esc clears
         ttk.Button(top, text="Search", command=self.search).pack(side="left")
+        ttk.Button(top, text="Clear", command=self.clear_search).pack(side="left", padx=(6,0))  # Clear button
         self.status = ttk.Label(top, text="", foreground="gray")
         self.status.pack(side="left", padx=10)
 
@@ -209,7 +213,8 @@ class App(tk.Tk):
 
         self.results = []
         self.populate_static_games()
- # ----- Populate static games -----
+
+    # ----- Populate static games -----
     #populate results with the bundled STATIC_GAMES 
     # and show a placeholder detail for the games.
     def populate_static_games(self):
@@ -222,15 +227,23 @@ class App(tk.Tk):
             self.overview.delete("1.0", "end")
             self.overview.insert("1.0", "Data goes here")
             self.overview.config(state="disabled")
- # ----- Search -----
- # (Clear search/filter not added yet)
-#(search/filter by console, year, genre and other info not added yet)
+
+    # Clear functionality
+    def clear_search(self):
+        self.qvar.set("")            # clear entry
+        self.set_status("")          # clear status
+        self.populate_static_games() # restore static list
+
+    # ----- Search -----
+    #(search/filter by console, year, genre and other info not added yet)
     @threaded
-        #perform a search: 
+     #perform a search: 
     #use cache if fresh, otherwise call search_remote and save to DB, then populate results.
     def search(self):
         q = self.qvar.get().strip()
         if not q:
+            # show static games when search box is empty
+            self.after(0, self.populate_static_games)
             return
         self.set_status("Searching...")
         self.results_list.delete(0, 'end')
@@ -312,7 +325,7 @@ class App(tk.Tk):
             db_save_game(game_id, game, images)
         except Exception:
             pass
-#populate title, meta, overview text and images list with provided game dict and image URLs.
+#populate title, meta, overview text and images list with provided game dict and image URLs
     def show_detail(self, game, images):
         title = game.get("game_title") or game.get("title") or "Untitled"
         platform = game.get("platform") or game.get("platforms") or ""
@@ -336,6 +349,7 @@ class App(tk.Tk):
             self.images_list.insert('end', url or "(no-url)")
         self.set_status("Ready")
 #open the selected image URL in the default web browser.
+#(adjust to open in program window instead of browser)
     def open_image(self, evt):
         sel = self.images_list.curselection()
         if not sel:
