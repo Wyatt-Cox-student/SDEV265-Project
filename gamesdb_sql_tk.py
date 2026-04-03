@@ -3,11 +3,16 @@
 # Python 3.10+, install requests: pip install requests
 # Replace THEGAMESDB_API_KEY with your key.
 
+## checklist
+# connect to thegamesdb.net
+# work on layout and design
+# add more to filter/search
+
 import tkinter as tk
 from tkinter import ttk, messagebox
 import requests, threading, sqlite3, time, webbrowser, json
 
-#GamesDB.net information stuff
+#thegamesdb.net information stuff
 THEGAMESDB_API_KEY = "7a5185043b9c80de440a54ba097dd8a107de762bdd7d7977990b1be306a3e830"
 BASE = "https://api.thegamesdb.net"
 DB_FILE = "gamesdb_cache.db"
@@ -15,6 +20,7 @@ CACHE_TTL_SECONDS = 7 * 24 * 3600  # 7 days
 
 # ----- Example static games list (NES/SNES/Genesis) -----
 #Remove all or remove everything but name from code when able to pull from TheGamesDB.net and store it in template?
+
 STATIC_GAMES = [
     ("Rayman", "SNES", 2017, "Adventure"),
     ("Shanghai II: Dragon's Eye", "SNES", 1992, "Puzzle"),
