@@ -14,7 +14,7 @@
 
 ## unsure changes
 # maybe remove back when table added and have clear reset everything to default?
-#Games in Databse section highlight row mathcing its name when clicked
+#Games in Database section highlight row mathcing its name when clicked
 
 ## currently has
 #static list not pulling from thegamesdb.net(work to get it replaced)
