@@ -45,4 +45,4 @@ search function (only searches by names right now)
 
 clear search function
 
-A back option that appears when an item is clicked and clears the data(clears a debug with only name right now)
+A back option that appears when an item is clicked and clears the data
