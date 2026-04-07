@@ -3,48 +3,30 @@
 # Python 3.10+, install requests: pip install requests
 # Replace THEGAMESDB_API_KEY with your key.
 
-## to do
-# connect to thegamesdb.net
-# data that we need to pull from to thegamesdb.net 
-    # images, game name, game ID, platform, release date, players, and overview/description
-    # (might not get all of them)
-# display thegamesdb.net info in data section
-# work on layout and design
-# add more to filter/search (search/filter by console, year, genre and other info not added yet)
-
-## currently has
-#static list not pulling from thegamesdb.net(work to get it replaced)
-# search function (only searches by names right now)
-#clear search function
-# A back option that appears when an item is clicked and clears the data(clears a debug with only name right now)
-
 import tkinter as tk
 from tkinter import ttk, messagebox
 import requests, threading, sqlite3, time, webbrowser, json
 
 # --- Config ---
-#thegamesdb.net information stuff
 THEGAMESDB_API_KEY = "7a5185043b9c80de440a54ba097dd8a107de762bdd7d7977990b1be306a3e830"
 BASE = "https://api.thegamesdb.net"
 DB_FILE = "gamesdb_cache.db"
 CACHE_TTL_SECONDS = 7 * 24 * 3600  # 7 days
 
 # ----- Example static games list (NES/SNES/Genesis) -----
-#Remove all or remove everything but name from code when able to pull from TheGamesDB.net and store it in template?
 STATIC_GAMES = [
-    ("Rayman", "SNES", 2017, "Adventure"),
-    ("Shanghai II: Dragon's Eye", "SNES", 1992, "Puzzle"),
-    ("San Goku Shi III", "SNES", 1993, "Strategy"),
-    ("The Legend of Zelda: Mirror of Worlds", "NES", 2025, "Adventure"),
-    ("Splatterworld", "NES", 1993, "Role-Playing"),
-    ("Snow Bros.", "NES", 1990, "Platform"),
-    ("Sonic 1 Remastered", "SEGA Genesis", 2007, "Platform"),
-    ("Addams Family Values", "SEGA Genesis", 1994, "Role-Playing"),
-    ("Aero the Acro-Bat", "SEGA Genesis", 1993, "Platform")
+    (47693, "Rayman", "SNES", 2017, "Adventure", "1", "Classic platformer.", []),
+    (5835, "Shanghai II: Dragon's Eye", "SNES", 1992, "Puzzle", "1", "Tile-matching puzzle.", []),
+    (53023, "San Goku Shi III", "SNES", 1993, "Strategy", "1-2", "Strategy game.", []),
+    (134985, "The Legend of Zelda: Mirror of Worlds", "NES", 2025, "Adventure", "1", "Zelda-like adventure.", []),
+    (134260, "Splatterworld", "NES", 1993, "Role-Playing", "1", "RPG.", []),
+    (109954, "Snow Bros.", "NES", 1990, "Platform", "1-2", "Arcade platformer.", []),
+    (124463, "Sonic 1 Remastered", "SEGA Genesis", 2007, "Platform", "1", "Remaster of Sonic 1.", []),
+    (9414, "Addams Family Values", "SEGA Genesis", 1994, "Role-Playing", "1-4", "RPG in Addams Family world.", []),
+    (4237, "Aero the Acro-Bat", "SEGA Genesis", 1993, "Platform", "1", "Platform action game.", [])
 ]
 
 # --- Database helpers ---
-#creates or opens the SQLite DB and ensure tables exist.
 def init_db():
     con = sqlite3.connect(DB_FILE)
     cur = con.cursor()
@@ -66,7 +48,6 @@ def init_db():
     con.commit()
     con.close()
 
-# fetch cached game JSON and updated timestamp for a game id, or None if missing.
 def db_get_game(game_id):
     con = sqlite3.connect(DB_FILE)
     cur = con.cursor()
@@ -75,7 +56,6 @@ def db_get_game(game_id):
     con.close()
     return None if not row else {"data": json.loads(row[0]), "updated_at": row[1]}
 
-#store/replace a game's JSON and updated timestamp and replace its image rows.
 def db_save_game(game_id, game_data, images):
     con = sqlite3.connect(DB_FILE)
     cur = con.cursor()
@@ -90,7 +70,6 @@ def db_save_game(game_id, game_data, images):
     con.commit()
     con.close()
 
-#return a list of image URLs for a given game_id from the images table.
 def db_get_images(game_id):
     con = sqlite3.connect(DB_FILE)
     cur = con.cursor()
@@ -99,7 +78,6 @@ def db_get_images(game_id):
     con.close()
     return [r[0] for r in rows]
 
-#fetch cached search results JSON and updated timestamp for query q, or None if missing.
 def db_get_search(q):
     con = sqlite3.connect(DB_FILE)
     cur = con.cursor()
@@ -108,7 +86,6 @@ def db_get_search(q):
     con.close()
     return None if not row else {"results": json.loads(row[0]), "updated_at": row[1]}
 
-#store/replace search results JSON and updated timestamp for query q.
 def db_save_search(q, results):
     con = sqlite3.connect(DB_FILE)
     cur = con.cursor()
@@ -119,8 +96,6 @@ def db_save_search(q, results):
     con.close()
 
 # ----- TheGamesDB API calls -----
-#perform an HTTP GET to TheGamesDB API endpoint with API key, 
-#return parsed JSON (raises on HTTP error)-
 def call_tgdb(endpoint, params=None):
     headers = {"Accept": "application/json"}
     if params is None:
@@ -130,8 +105,6 @@ def call_tgdb(endpoint, params=None):
     resp.raise_for_status()
     return resp.json()
 
-# call the Games/ByGameName endpoint 
-#and return a list of game dicts (handles dict or list shape).
 def search_remote(q):
     data = call_tgdb("/Games/ByGameName", params={"name": q})
     games = data.get("data", {}).get("games") or []
@@ -139,9 +112,6 @@ def search_remote(q):
         games = [v for v in games.values()]
     return games
 
-#call Games/ByGameId, extract the single game dict and 
-#build a list of full image URLs 
-#(returns (game, images_list) where images_list items are {"url": ...}).
 def get_game_remote(game_id):
     data = call_tgdb("/Games/ByGameId", params={"id": game_id})
     games = data.get("data", {}).get("games", {}) or {}
@@ -165,233 +135,174 @@ def get_game_remote(game_id):
         images_full.append({"url": url})
     return game, images_full
 
-# ----- Worker wrappers (threaded) -----
-#decorator that runs the wrapped function in a daemon Thread (fire-and-forget).
+# ----- Worker wrappers -----
 def threaded(func):
     def wrapper(*a, **kw):
         threading.Thread(target=lambda: func(*a, **kw), daemon=True).start()
     return wrapper
 
 # ----- Tkinter GUI -----
-#main Tkinter application window that initializes UI, DB and holds state and methods
 class App(tk.Tk):
-     #set window, init DB and create widgets.
     def __init__(self):
         super().__init__()
         self.title("Classic Game Database")
         self.geometry("1200x800")
         init_db()
         self.create_widgets()
-#build the search entry, buttons, status, results list, detail pane, and bind events.
+
     def create_widgets(self):
+        # TOP BAR
         top = ttk.Frame(self)
         top.pack(fill="x", padx=8, pady=8)
+
         ttk.Label(top, text="Search:").pack(side="left")
+
         self.qvar = tk.StringVar()
-        entry = ttk.Entry(top, textvariable=self.qvar, width=50)
+        entry = ttk.Entry(top, textvariable=self.qvar, width=40)
         entry.pack(side="left", padx=6)
         entry.bind("<Return>", lambda e: self.search())
         entry.bind("<Escape>", lambda e: self.clear_search())
+
         ttk.Button(top, text="Search", command=self.search).pack(side="left")
-        ttk.Button(top, text="Clear", command=self.clear_search).pack(side="left", padx=(6,0))
+        ttk.Button(top, text="Clear", command=self.clear_search).pack(side="left", padx=6)
+
         self.status = ttk.Label(top, text="", foreground="gray")
         self.status.pack(side="left", padx=10)
 
-        # Main panes
+        # MAIN SPLIT
         main = ttk.Panedwindow(self, orient="horizontal")
-        main.pack(fill="both", expand=True, padx=8, pady=(0,8))
+        main.pack(fill="both", expand=True)
 
-        # Left results
-        left = ttk.Frame(main, width=500)
+        # LEFT LIST
+        left = ttk.Frame(main, width=400)
         main.add(left, weight=1)
-        ttk.Label(left, text="Games in Database").pack(anchor="w")
+
+        ttk.Label(left, text="Games").pack(anchor="w")
+
         self.results_list = tk.Listbox(left)
-        self.results_list.pack(fill="both", expand=True, pady=(4,0))
+        self.results_list.pack(fill="both", expand=True)
         self.results_list.bind("<<ListboxSelect>>", self.on_select)
 
-        # Right detail
+        # RIGHT PANEL
         right = ttk.Frame(main)
         main.add(right, weight=2)
-        self.title_lbl = ttk.Label(right, text="", font=("TkDefaultFont", 14, "bold"))
+
+        self.title_lbl = ttk.Label(right, font=("TkDefaultFont", 14, "bold"))
         self.title_lbl.pack(anchor="w", pady=(4,2))
-        self.meta_lbl = ttk.Label(right, text="", foreground="gray")
+
+        self.meta_lbl = ttk.Label(right, foreground="gray")
         self.meta_lbl.pack(anchor="w", pady=(0,6))
 
-        # --- BACK BUTTON ---
         self.back_btn = ttk.Button(right, text="Back", command=self.reset_detail)
-        self.back_btn.pack(anchor="w", pady=(0,4))
-        self.back_btn.pack_forget()  # hidden initially
+        self.back_btn.pack(anchor="w")
+        self.back_btn.pack_forget()
 
-        self.overview = tk.Text(right, wrap="word", height=18)
-        self.overview.pack(fill="both", expand=True)
-        self.overview.config(state="disabled")
-
-        self.images_list = tk.Listbox(right, height=6)
-        self.images_list.pack(fill="x", expand=True)
-        self.images_list.bind("<Double-Button-1>", self.open_image)
+        # TABLE FRAME
+        self.detail_frame = tk.Frame(right, bg="white", padx=10, pady=10, relief="groove", borderwidth=2)
+        self.detail_frame.pack(fill="both", expand=True)
 
         self.results = []
         self.populate_static_games()
 
-        # ----- Populate static games -----
-    #populate results with the bundled STATIC_GAMES 
-    # and show a placeholder detail for the games.
+    # ----- Populate static games -----
     def populate_static_games(self):
-        self.results_list.delete(0, 'end')
-        self.results = [{"game_title": g[0]} for g in STATIC_GAMES]
+        self.results = []
+        self.results_list.delete(0, "end")
         for g in STATIC_GAMES:
-            self.results_list.insert('end', g[0])
-        # Placeholder overview
-        self.overview.config(state="normal")
-        self.overview.delete("1.0", "end")
-        self.overview.insert("1.0", "Data goes here")
-        self.overview.config(state="disabled")
+            gid, name, platform, year, genre, players, overview, images = g
+            item = {
+                "id": gid,
+                "game_title": name,
+                "platform": platform,
+                "release_date": year,
+                "genre": genre,
+                "players": players,
+                "overview": overview,
+                "images": images
+            }
+            self.results.append(item)
+            self.results_list.insert("end", name)  # <-- only name
 
-     # Clear functionality
+    # Clear search
     def clear_search(self):
         self.qvar.set("")
-        self.results_list.delete(0, 'end')
+        self.populate_static_games()
+        self.status.config(text="")
 
-    # repopulate results list with static games
-        self.results = [{"game_title": g[0]} for g in STATIC_GAMES]
-        for g in STATIC_GAMES:
-            self.results_list.insert('end', g[0])
-
-    # --- Reset detail panel ---
+    # Reset detail panel
     def reset_detail(self):
         self.back_btn.pack_forget()
         self.title_lbl.config(text="")
         self.meta_lbl.config(text="")
-        self.overview.config(state="normal")
-        self.overview.delete("1.0", "end")
-        self.overview.config(state="disabled")
-        self.images_list.delete(0, 'end')
+        for child in self.detail_frame.winfo_children():
+            child.destroy()
 
     # ----- Search -----
-    #(search/filter by console, year, genre and other info not added yet)
     @threaded
-        #perform a search: 
-    #use cache if fresh, otherwise call search_remote and save to DB, then populate results.
     def search(self):
-        q = self.qvar.get().strip()
+        q = self.qvar.get().strip().lower()
         if not q:
-            self.after(0, self.populate_static_games)
+            self.populate_static_games()
             return
-        self.set_status("Searching...")
-        self.results_list.delete(0, 'end')
-        cached = db_get_search(q)
-        now = int(time.time())
-        use_cache = False
-        if cached and (now - cached["updated_at"] < CACHE_TTL_SECONDS):
-            results = cached["results"]
-            use_cache = True
-        else:
-            try:
-                results = search_remote(q)
-                db_save_search(q, results)
-            except Exception as e:
-                if cached:
-                    results = cached["results"]
-                else:
-                    self.error(e)
-                    return
-        self.after(0, lambda: self.populate_results(results, from_cache=use_cache))
 
-    # --- Populate results list ---
-     #update the results Listbox and status text from a results list.
-    def populate_results(self, results, from_cache=False):
-        self.results = results
-        self.results_list.delete(0, 'end')
-        for g in results:
-            title = g.get("game_title") or g.get("title") or "Untitled"
-            self.results_list.insert('end', title)
-        self.set_status(f"{len(results)} result(s) {'(cache)' if from_cache else ''}")
+        filtered = []
+        for g in STATIC_GAMES:
+            gid, name, platform, year, genre, players, overview, images = g
+            if q in name.lower():
+                filtered.append({
+                    "id": gid,
+                    "game_title": name,
+                    "platform": platform,
+                    "release_date": year,
+                    "genre": genre,
+                    "players": players,
+                    "overview": overview,
+                    "images": images
+                })
 
-    # --- Status / Error ---
-    # update the status label.
-    def set_status(self, text):
-        self.status.config(text=text)
-    # if something goes wrong show an error dialog and set status to "Error".
-    def error(self, exc):
-        self.after(0, lambda: messagebox.showerror("Error", str(exc)))
-        self.set_status("Error")
+        self.results = filtered
+        self.results_list.delete(0, "end")
+        for g in filtered:
+            self.results_list.insert("end", g['game_title'])  # <-- only name
+        self.status.config(text=f"{len(filtered)} result(s)")
 
-    # --- Result selection ---
-    # handle selecting a result: (in progress)
-#if static (no id) show placeholder;
-#else use cached game if fresh or start fetch_and_show thread.
+    # Result selection
     def on_select(self, evt):
         sel = self.results_list.curselection()
         if not sel:
             return
-        idx = sel[0]
-        g = self.results[idx]
-        game_name = g.get("game_title") or g.get("title") or "Untitled"
-        self.back_btn.pack(anchor="w", pady=(0,4))  # Show back button
-        self.title_lbl.config(text=game_name)
-        self.meta_lbl.config(text="")
-        self.overview.config(state="normal")
-        self.overview.delete("1.0", "end")
-         # Show detail placeholder
-        self.overview.insert("1.0", "Data goes here\n")
-        self.overview.insert("end", f"[DEBUG] {game_name}")
-        self.overview.config(state="disabled")
-        self.images_list.delete(0, 'end')
-        self.set_status("Ready")
+        g = self.results[sel[0]]
+        self.back_btn.pack(anchor="w", pady=(0,4))
+        self.show_table(g)
 
-    # --- Fetch / show remote game ---
-    #fetch game and images remotely, save to DB, then show detail on main thread
-    def fetch_and_show(self, game_id):
-        try:
-            game, images = get_game_remote(game_id)
-            db_save_game(game_id, game, images)
-            images_urls = [im.get("url") for im in images if im.get("url")]
-            self.after(0, lambda: self.show_detail(game, images_urls))
-        except Exception as e:
-            self.error(e)
+    def show_table(self, d):
+        for child in self.detail_frame.winfo_children():
+            child.destroy()
 
-  #background refresh of a game's remote data and save to DB (errors ignored).
-    def refresh_game_if_needed(self, game_id):
-        try:
-            game, images = get_game_remote(game_id)
-            db_save_game(game_id, game, images)
-        except Exception:
-            pass
+        self.title_lbl.config(text=d["game_title"])
 
-    #populate title, meta, overview text and images list with provided game dict and image URLs
-    def show_detail(self, game, images):
-        title = game.get("game_title") or game.get("title") or "Untitled"
-        platform = game.get("platform") or game.get("platforms") or ""
-        release = game.get("release_date") or game.get("released") or ""
-        players = game.get("players") or ""
-        self.title_lbl.config(text=title)
         meta = []
-        if platform: meta.append(f"Platform: {platform}")
-        if release: meta.append(f"Release: {release}")
-        if players: meta.append(f"Players: {players}")
+        if d.get("platform"): meta.append(d["platform"])
+        if d.get("release_date"): meta.append(str(d["release_date"]))
+        if d.get("players"): meta.append(f"Players: {d['players']}")
         self.meta_lbl.config(text=" • ".join(meta))
 
-        overview = game.get("overview") or game.get("description") or ""
-        self.overview.config(state="normal")
-        self.overview.delete("1.0", "end")
-        self.overview.insert("1.0", overview)
-        self.overview.config(state="disabled")
+        fields = [
+            ("Game ID ", d.get("id")),  # debug only
+            ("Name", d.get("game_title")),
+            ("Platform", d.get("platform")),
+            ("Release Date", d.get("release_date")),
+            ("Players", d.get("players")),
+            ("Description", d.get("overview")),
+            ("Images", ", ".join(d.get("images") or []) or "link.jpg")
+        ]
 
-        self.images_list.delete(0, 'end')
-        for url in (images or []):
-            self.images_list.insert('end', url or "(no-url)")
-        self.set_status("Ready")
+        self.detail_frame.columnconfigure(0, minsize=250)
+        self.detail_frame.columnconfigure(1, weight=1)
 
-    # --- Open image ---
-    #open the selected image URL in the default web browser.
-    #(adjust to open in program window instead of browser)
-    def open_image(self, evt):
-        sel = self.images_list.curselection()
-        if not sel:
-            return
-        url = self.images_list.get(sel[0])
-        if url and url != "(no-url)":
-            webbrowser.open(url)
+        for r, (label, value) in enumerate(fields):
+            tk.Label(self.detail_frame, text=label, anchor="w", bg="white").grid(row=r, column=0, sticky="nw", padx=6, pady=6)
+            tk.Label(self.detail_frame, text=str(value), anchor="w", wraplength=600, bg="white").grid(row=r, column=1, sticky="nw", padx=6, pady=6)
 
 # --- Run app ---
 if __name__ == "__main__":
