@@ -12,6 +12,9 @@
 # work on layout and design
 # add more to filter/search (search/filter by console, year, genre and other info not added yet)
 
+## unsure changes
+# maybe remove back and search results when table added and have clear reset everything to default?
+
 ## currently has
 #static list not pulling from thegamesdb.net(work to get it replaced)
 # search function (only searches by names right now)
