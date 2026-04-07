@@ -3,11 +3,11 @@
 # Python 3.10+, install requests: pip install requests
 # Replace THEGAMESDB_API_KEY with your key.
 
-## checklist
+## to do
 # connect to thegamesdb.net
 # display thegamesdb.net info in data section
 # work on layout and design
-# add more to filter/search
+# add more to filter/search (search/filter by console, year, genre and other info not added yet)
 
 ## currently has
 #static list not pulling from thegamesdb.net(work to get it replaced)
