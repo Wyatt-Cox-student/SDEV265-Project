@@ -13,7 +13,8 @@
 # add more to filter/search (search/filter by console, year, genre and other info not added yet)
 
 ## unsure changes
-# maybe remove back and search results when table added and have clear reset everything to default?
+# maybe remove back when table added and have clear reset everything to default?
+#Games in Databse section highlight row mathcing its name when clicked
 
 ## currently has
 #static list not pulling from thegamesdb.net(work to get it replaced)
@@ -207,7 +208,7 @@ class App(tk.Tk):
         # Left results
         left = ttk.Frame(main, width=500)
         main.add(left, weight=1)
-        ttk.Label(left, text="Results").pack(anchor="w")
+        ttk.Label(left, text="Games in Database").pack(anchor="w")
         self.results_list = tk.Listbox(left)
         self.results_list.pack(fill="both", expand=True, pady=(4,0))
         self.results_list.bind("<<ListboxSelect>>", self.on_select)
