@@ -12,6 +12,17 @@ San Goku Shi III id=53023
 
 The Legend of Zelda: Mirror of Worlds id=134985
 
+Splatterworld id=134260
+
+Snow Bros. id=109954
+
+Sonic 1 Remastered id=124463
+
+Addams Family Values id=9414
+
+Aero the Acro-Bat id=4237
+
+
 ## to do
 connect to thegamesdb.net
 
@@ -32,14 +43,3 @@ static list not pulling from thegamesdb.net(work to get it replaced)
 search function (only searches by names right now)
 clear search function
 A back option that appears when an item is clicked and clears the data(clears a debug with only name right now)
-
-Splatterworld id=134260
-
-Snow Bros. id=109954
-
-Sonic 1 Remastered id=124463
-
-Addams Family Values id=9414
-
-Aero the Acro-Bat id=4237
-
