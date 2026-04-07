@@ -14,7 +14,7 @@
 
 ## unsure changes
 # maybe remove back when table added and have clear reset everything to default?
-#remove Games in Database section o rmake it be part of a higlight table rows and/or filter system
+#remove Games in Database section or make it be part of a higlight table rows and/or filter system
 
 ## currently has
 #static list not pulling from thegamesdb.net(work to get it replaced)
