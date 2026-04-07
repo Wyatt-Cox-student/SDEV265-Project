@@ -14,13 +14,13 @@
 
 ## unsure changes
 # maybe remove back when table added and have clear reset everything to default?
-#Games in Database section highlight row mathcing its name when clicked
+#remove Games in Database section o rmake it be part of a higlight table rows and/or filter system
 
 ## currently has
 #static list not pulling from thegamesdb.net(work to get it replaced)
 # search function (only searches by names right now)
 #clear search function
-# A back option that appaeres when an item is clicked and clears the data(clears a debug with only name right now)
+# A back option that appears when an item is clicked and clears the data(clears a debug with only name right now)
 
 import tkinter as tk
 from tkinter import ttk, messagebox
