@@ -5,8 +5,15 @@
 
 ## checklist
 # connect to thegamesdb.net
+# display thegamesdb.net info in data section
 # work on layout and design
 # add more to filter/search
+
+## currently has
+#static list not pulling from thegamesdb.net(work to get it replaced)
+# search function (only searches by names right now)
+#clear search function
+# A back option that appaeres when an item is clicked and clears the data(clears a debug with only name right now)
 
 import tkinter as tk
 from tkinter import ttk, messagebox
