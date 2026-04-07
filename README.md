@@ -40,6 +40,9 @@ add more to filter/search (search/filter by console, year, genre and other info 
 
 ## currently has
 static list not pulling from thegamesdb.net(work to get it replaced)
+
 search function (only searches by names right now)
+
 clear search function
+
 A back option that appears when an item is clicked and clears the data(clears a debug with only name right now)
