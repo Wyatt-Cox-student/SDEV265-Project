@@ -12,6 +12,21 @@ San Goku Shi III id=53023
 
 The Legend of Zelda: Mirror of Worlds id=134985
 
+## to do
+# connect to thegamesdb.net
+# data that we need to pull from to thegamesdb.net 
+    # images, game name, game ID, platform, release date, players, and overview/description
+    # (might not get all of them)
+# display thegamesdb.net info in data section
+# work on layout and design
+# add more to filter/search (search/filter by console, year, genre and other info not added yet)
+
+## currently has
+#static list not pulling from thegamesdb.net(work to get it replaced)
+# search function (only searches by names right now)
+#clear search function
+# A back option that appears when an item is clicked and clears the data(clears a debug with only name right now)
+
 Splatterworld id=134260
 
 Snow Bros. id=109954
