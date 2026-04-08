@@ -92,20 +92,27 @@ def fetch_game_details(game_id):
 # --- Tkinter GUI Setup ---
 root = tk.Tk()
 root.title("TheGamesDB Game Browser")
-root.geometry("600x600")
+root.geometry("900x600")
 
-tk.Label(root, text="Enter Game Name:").pack(pady=5)
-entry_name = tk.Entry(root, width=50)
-entry_name.pack(pady=5)
+# Top search entry
+top_frame = tk.Frame(root)
+top_frame.pack(fill="x", pady=5, padx=10)
 
-btn_search = tk.Button(root, text="Search Game", command=fetch_game_data_by_name)
-btn_search.pack(pady=10)
+tk.Label(top_frame, text="Enter Game Name:").pack(side="left")
+entry_name = tk.Entry(top_frame, width=50)
+entry_name.pack(side="left", padx=5)
+btn_search = tk.Button(top_frame, text="Search Game", command=fetch_game_data_by_name)
+btn_search.pack(side="left", padx=5)
 
-# Scrollable Frame for Search Results
-results_frame = tk.Frame(root)
-results_frame.pack(fill="both", expand=False, padx=10, pady=5)
+# Main content frame: left results, right details
+content_frame = tk.Frame(root)
+content_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
-results_canvas = tk.Canvas(results_frame, height=200)
+# Left: Scrollable Frame for Search Results
+results_frame = tk.Frame(content_frame, width=300)
+results_frame.pack(side="left", fill="y", padx=(0,10), expand=False)
+
+results_canvas = tk.Canvas(results_frame, width=300)
 results_scrollbar = tk.Scrollbar(results_frame, orient="vertical", command=results_canvas.yview)
 results_inner_frame = tk.Frame(results_canvas)
 
@@ -120,9 +127,9 @@ results_canvas.configure(yscrollcommand=results_scrollbar.set)
 results_canvas.pack(side="left", fill="both", expand=True)
 results_scrollbar.pack(side="right", fill="y")
 
-# Scrollable Text for Game Details
-result_text_frame = tk.Frame(root)
-result_text_frame.pack(fill="both", expand=True, padx=10, pady=10)
+# Right: Scrollable Text for Game Details
+result_text_frame = tk.Frame(content_frame)
+result_text_frame.pack(side="left", fill="both", expand=True)
 
 result_text = tk.Text(result_text_frame, wrap="word", state="disabled")
 result_text.pack(side="left", fill="both", expand=True)
