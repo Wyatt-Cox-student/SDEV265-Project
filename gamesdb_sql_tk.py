@@ -222,7 +222,13 @@ class App(tk.Tk):
             }
             self.results.append(item)
             self.results_list.insert("end", name)  # <-- only name
-
+    # update the status label.
+    def set_status(self, text):
+        self.status.config(text=text)
+# if something goes wrong show an error dialog and set status to "Error".
+    def error(self, exc):
+        self.after(0, lambda: messagebox.showerror("Error", str(exc)))
+        self.set_status("Error")
     # Clear search
     def clear_search(self):
         self.qvar.set("")
@@ -304,7 +310,14 @@ class App(tk.Tk):
         for r, (label, value) in enumerate(fields):
             tk.Label(self.detail_frame, text=label, anchor="w", bg="white").grid(row=r, column=0, sticky="nw", padx=6, pady=6)
             tk.Label(self.detail_frame, text=str(value), anchor="w", wraplength=600, bg="white").grid(row=r, column=1, sticky="nw", padx=6, pady=6)
-
+    
+    def open_image(self, evt):
+        sel = self.images_list.curselection()
+        if not sel:
+            return
+        url = self.images_list.get(sel[0])
+        if url and url != "(no-url)":
+            webbrowser.open(url)
 # --- Run app ---
 if __name__ == "__main__":
     init_db()
