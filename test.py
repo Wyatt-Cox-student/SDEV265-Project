@@ -98,10 +98,10 @@ root.geometry("900x600")
 top_frame = tk.Frame(root)
 top_frame.pack(fill="x", pady=5, padx=10)
 
-tk.Label(top_frame, text="Enter Game Name:").pack(side="left")
+tk.Label(top_frame, text="Search:").pack(side="left")
 entry_name = tk.Entry(top_frame, width=50)
 entry_name.pack(side="left", padx=5)
-btn_search = tk.Button(top_frame, text="Search Game", command=fetch_game_data_by_name)
+btn_search = tk.Button(top_frame, text="Search", command=fetch_game_data_by_name)
 btn_search.pack(side="left", padx=5)
 
 # Main content frame: left results, right details
