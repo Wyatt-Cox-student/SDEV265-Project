@@ -44,6 +44,6 @@ static list not pulling from thegamesdb.net(work to get it replaced)(done ready 
 
 search function (only searches by names right now)
 
-clear search function (add to test)
+clear search function
 
-A back option that appears when an item is clicked and clears the data
+A back option that appears when an item is clicked and goes back to results
