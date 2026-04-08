@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import requests
 
-API_KEY = '7a5185043b9c80de440a54ba097dd8d7977990b1be306a3e8'
+API_KEY = '7a5185043b9c80de440a54ba097dd8a107de762bdd7d7977990b1be306a3e830'
 BASE_URL = 'https://api.thegamesdb.net/'
 
 platform_cache = {}
