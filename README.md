@@ -26,11 +26,9 @@ Aero the Acro-Bat id=4237
 ## to do
 connect to thegamesdb.net (in testing)
 
-data that we need to pull from to thegamesdb.net 
+data that we need to pull from thegamesdb.net 
 
     images, game name, game ID, Genre, platform, release date, players, and overview/description
-    
-    (might not get all of them)
     
 display thegamesdb.net info in data section (in testing)
 
@@ -38,11 +36,13 @@ work on layout and design
 
 add more to filter/search (search/filter by console, year, genre and other info not added yet)
 
+work on getting images pulled from thegamesdb.net
+
 ## currently has
 static list not pulling from thegamesdb.net(work to get it replaced)( replacement in testing)
 
 search function (only searches by names right now)
 
-clear search function
+clear search function (add to test)
 
 A back option that appears when an item is clicked and clears the data
