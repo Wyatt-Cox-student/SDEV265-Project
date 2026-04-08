@@ -24,6 +24,9 @@ Aero the Acro-Bat id=4237
 
 
 ## to do
+
+fix data pull stuff (broken genre, players, overview)
+
 connect to thegamesdb.net (in testing)
 
 data that we need to pull from thegamesdb.net 
