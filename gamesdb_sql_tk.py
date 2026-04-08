@@ -288,14 +288,15 @@ class App(tk.Tk):
         self.meta_lbl.config(text=" • ".join(meta))
 
         fields = [
-            ("Game ID ", d.get("id")),  # debug only
+            ("Game ID ", d.get("id")),
             ("Name", d.get("game_title")),
             ("Platform", d.get("platform")),
             ("Release Date", d.get("release_date")),
+            ("Genre", d.get("genre")),
             ("Players", d.get("players")),
             ("Description", d.get("overview")),
             ("Images", ", ".join(d.get("images") or []) or "link.jpg")
-        ]
+    ]
 
         self.detail_frame.columnconfigure(0, minsize=250)
         self.detail_frame.columnconfigure(1, weight=1)
