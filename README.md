@@ -20,6 +20,10 @@ add more to filter/search (search/filter by console, year, genre and other info 
 
 work on getting images pulled from thegamesdb.net
 
+# style concepts
+search, clear, and back buttons grey background, black outline, and red text.
+filters (buttons) on side white text on black background 0 border.
+
 ## currently has
 
 search function (only searches by names right now)
