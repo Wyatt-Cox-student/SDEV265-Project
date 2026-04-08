@@ -141,7 +141,7 @@ def clear_search():
 # --- Tkinter GUI Setup ---
 root = tk.Tk()
 root.title("TheGamesDB Game Browser")
-root.geometry("500x600")
+root.geometry("600x800")
 
 # Top search
 top_frame = tk.Frame(root)
