@@ -25,7 +25,7 @@ search, clear, and back buttons grey background, black outline, and red text.
 
 filters (buttons) on side white text on black background 0 border.
 
-limit 20 per page and have multiple pages you can click through like google
+limit 20 per page and have multiple pages you can click through like google?
 
 ## currently has
 
