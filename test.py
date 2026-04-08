@@ -131,7 +131,13 @@ def fetch_game_details(game_id):
     except Exception as e:
         messagebox.showerror("Error", str(e))
 
+def clear_search():
+    # Clear the search entry
+    entry_name.delete(0, tk.END)
 
+    # Clear the results panel
+    for widget in results_inner_frame.winfo_children():
+        widget.destroy()
 # --- Tkinter GUI Setup ---
 root = tk.Tk()
 root.title("TheGamesDB Game Browser")
@@ -147,6 +153,9 @@ entry_name.pack(side="left", padx=5)
 
 btn_search = tk.Button(top_frame, text="Search", command=fetch_game_data_by_name)
 btn_search.pack(side="left", padx=5)
+
+btn_clear = tk.Button(top_frame, text="Clear", command=clear_search)
+btn_clear.pack(side="left", padx=5)
 
 # Single content panel
 results_frame = tk.Frame(root)
