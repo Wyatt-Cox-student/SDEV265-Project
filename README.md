@@ -28,7 +28,7 @@ connect to thegamesdb.net
 
 data that we need to pull from to thegamesdb.net 
 
-    images, game name, game ID, platform, release date, players, and overview/description
+    images, game name, game ID, Genre, platform, release date, players, and overview/description
     
     (might not get all of them)
     
