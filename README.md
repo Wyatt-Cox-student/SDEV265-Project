@@ -24,7 +24,7 @@ Aero the Acro-Bat id=4237
 
 
 ## to do
-connect to thegamesdb.net
+connect to thegamesdb.net (in testing)
 
 data that we need to pull from to thegamesdb.net 
 
@@ -32,14 +32,14 @@ data that we need to pull from to thegamesdb.net
     
     (might not get all of them)
     
-display thegamesdb.net info in data section
+display thegamesdb.net info in data section (in testing)
 
 work on layout and design
 
 add more to filter/search (search/filter by console, year, genre and other info not added yet)
 
 ## currently has
-static list not pulling from thegamesdb.net(work to get it replaced)
+static list not pulling from thegamesdb.net(work to get it replaced)( replacement in testing)
 
 search function (only searches by names right now)
 
