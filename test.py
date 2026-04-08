@@ -6,6 +6,25 @@ import requests
 API_KEY = '7a5185043b9c80de440a54ba097dd8d7977990b1be306a3e830'
 BASE_URL = 'https://api.thegamesdb.net/'
 
+# Cache platform ID -> name
+platform_cache = {}
+
+def get_platform_name(platform_id):
+    if platform_id in platform_cache:
+        return platform_cache[platform_id]
+
+    url = f"{BASE_URL}v1/Platforms?apikey={API_KEY}"
+    try:
+        response = requests.get(url)
+        data = response.json()
+        if 'data' in data and 'platforms' in data['data']:
+            for pid, pdata in data['data']['platforms'].items():
+                platform_cache[int(pid)] = pdata.get('name', 'Unknown')
+    except Exception as e:
+        print("Error fetching platforms:", e)
+
+    return platform_cache.get(platform_id, "Unknown")
+
 def fetch_game_data_by_name():
     game_name = entry_name.get()
     if not game_name:
@@ -51,9 +70,11 @@ def fetch_game_details(game_id):
             title = game.get('game_title', 'N/A')
             overview = game.get('overview', 'No description available.')
             release_date = game.get('release_date', 'Unknown')
-            platform = game.get('platform', 'Unknown')
 
-            detail_text = f"Title: {title}\nPlatform: {platform}\nRelease Date: {release_date}\n\nOverview:\n{overview}"
+            platform_id = game.get('platform')
+            platform_name = get_platform_name(platform_id) if platform_id else "Unknown"
+
+            detail_text = f"Title: {title}\nPlatform: {platform_name}\nRelease Date: {release_date}\n\nOverview:\n{overview}"
             result_text.config(state="normal")
             result_text.delete(1.0, tk.END)
             result_text.insert(tk.END, detail_text)
