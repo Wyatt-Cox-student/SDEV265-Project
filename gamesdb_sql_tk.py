@@ -195,6 +195,7 @@ filter_frame.pack(side="left", fill="y")
 
 tk.Label(filter_frame, text="Filters", font=("TkDefaultFont", 12, "bold")).pack(pady=10)
 
+#Filter Buttons
 tk.Button(filter_frame, text="NES",
           command=lambda: filter_by_platform("Nintendo Entertainment System")).pack(pady=5)
 
