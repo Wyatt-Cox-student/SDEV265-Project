@@ -198,11 +198,12 @@ tk.Label(filter_frame, text="Filters", font=("TkDefaultFont", 12, "bold")).pack(
 tk.Button(filter_frame, text="NES",
           command=lambda: filter_by_platform("Nintendo Entertainment System")).pack(pady=5)
 
+tk.Button(filter_frame, text="SEGA",
+          command=lambda: filter_by_platform("Genesis")).pack(pady=5)
+
 tk.Button(filter_frame, text="SNES",
           command=lambda: filter_by_platform("Super Nintendo")).pack(pady=5)
 
-tk.Button(filter_frame, text="SEGA",
-          command=lambda: filter_by_platform("Genesis")).pack(pady=5)
 
 tk.Button(filter_frame, text="All",
           command=show_previous_results).pack(pady=10)
