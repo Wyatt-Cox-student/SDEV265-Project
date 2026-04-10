@@ -221,8 +221,6 @@ back_button = tk.Button(
     width= 7
 )
 
-# DO NOT PACK HERE (only in detail view)
-
 
 # RIGHT SIDE SEARCH AREA
 right_bar = tk.Frame(top_frame, bg=BG)
