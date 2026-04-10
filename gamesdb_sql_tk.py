@@ -198,7 +198,7 @@ def clear_search():
 
 root = tk.Tk()
 root.title("TheGamesDB Browser")
-root.geometry("700x800")
+root.geometry("760x800")
 root.configure(bg=BG)
 
 # ================= TOP BAR (FIXED CLEAN SPLIT) =================
@@ -217,7 +217,8 @@ back_button = tk.Button(
     bg=BG,
     fg="red",
     bd=1.5,
-    relief="solid"
+    relief="solid",
+    width= 7
 )
 
 # DO NOT PACK HERE (only in detail view)
@@ -233,11 +234,11 @@ entry_name.pack(side="left", padx=5)
 
 tk.Button(right_bar, text="Search",
           command=fetch_game_data_by_name,
-          bg=BG, fg="red", bd=1.5, relief="solid").pack(side="left", padx=5)
+          bg=BG, fg="red", bd=1.5, relief="solid", width= 10).pack(side="left", padx=5)
 
 tk.Button(right_bar, text="Clear",
           command=clear_search,
-          bg=BG, fg="red", bd=1.5, relief="solid").pack(side="left", padx=5)
+          bg=BG, fg="red", bd=1.5, relief="solid", width= 10).pack(side="left", padx=5)
 
 # ------------------ MAIN ------------------
 
@@ -247,8 +248,8 @@ main_frame.pack(fill="both", expand=True)
 filter_frame = tk.Frame(main_frame, bg=BG, width=150, bd=1, relief="solid")
 filter_frame.pack(side="left", fill="y")
 
-tk.Label(filter_frame, text="Filters", bg=BG, fg=FG,
-         font=("TkDefaultFont", 12, "bold")).pack(pady=10)
+tk.Label(filter_frame, text="Filters", bg="#000000", fg="white",
+         font=("TkDefaultFont", 12, "bold"), width=15, height = 2).pack(pady=10)
 
 tk.Button(filter_frame, text="NES",
           command=lambda: filter_by_platform("Nintendo Entertainment System"),
