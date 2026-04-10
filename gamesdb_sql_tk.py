@@ -6,17 +6,18 @@ import requests
 BG = "#BCBCBC"
 FG = "black"
 
-# --- API Configuration ---
+# --- API CONFIG ---
 API_KEY = '7a5185043b9c80de440a54ba097dd8a107de762bdd7d7977990b1be306a3e830'
 BASE_URL = 'https://api.thegamesdb.net/'
 
-# --- Global State ---
+# --- GLOBAL STATE ---
 platform_cache = {}
 genre_cache = {}
 last_search_results = []
 is_showing_detail = False
 
-# --- Load Platforms ---
+# ------------------ DATA ------------------
+
 def load_platforms():
     global platform_cache
     try:
@@ -30,7 +31,6 @@ def load_platforms():
 def get_platform_name(platform_id):
     return platform_cache.get(platform_id, "Unknown")
 
-# --- Load Genres ---
 def load_genres():
     global genre_cache
     try:
@@ -48,7 +48,8 @@ def get_genres_text(raw):
         return ", ".join(genre_cache.get(int(g), str(g)) for g in raw)
     return str(raw)
 
-# --- FILTER LOGIC ---
+# ------------------ FILTER ------------------
+
 def find_platform_id_by_name(search_name):
     for pid, name in platform_cache.items():
         if search_name.lower() in name.lower():
@@ -56,8 +57,8 @@ def find_platform_id_by_name(search_name):
     return None
 
 def filter_by_platform(platform_keyword):
-    for widget in results_inner_frame.winfo_children():
-        widget.destroy()
+    for w in results_inner_frame.winfo_children():
+        w.destroy()
 
     pid = find_platform_id_by_name(platform_keyword)
 
@@ -73,14 +74,15 @@ def filter_by_platform(platform_keyword):
     else:
         tk.Label(results_inner_frame, text="No games match this filter.", bg=BG, fg=FG).pack()
 
-# --- UI Builders ---
+# ------------------ UI ROW ------------------
+
 def build_result_row(game):
     game_id = game.get("id")
     title = game.get("game_title", "N/A")
     release_date = game.get("release_date", "Unknown")
     platform_name = get_platform_name(game.get("platform"))
 
-    row = tk.Frame(results_inner_frame, padx=4, pady=6, bg=BG)
+    row = tk.Frame(results_inner_frame, bg=BG, padx=4, pady=6)
     row.pack(fill="x", pady=2)
 
     title_lbl = tk.Label(row, text=title, fg="blue", bg=BG,
@@ -92,20 +94,23 @@ def build_result_row(game):
                         fg="gray", bg=BG)
     meta_lbl.pack(fill="x")
 
-    def on_click(event=None):
+    def on_click(e=None):
         fetch_game_details(game_id)
 
     title_lbl.bind("<Button-1>", on_click)
     meta_lbl.bind("<Button-1>", on_click)
 
-# --- API Calls ---
+# ------------------ SEARCH ------------------
+
 def fetch_game_data_by_name():
     global last_search_results, is_showing_detail
-    name = entry_name.get().strip()
 
+    name = entry_name.get().strip()
     if not name:
         messagebox.showwarning("Input Error", "Enter a game name")
         return
+
+    back_button.pack_forget()
 
     try:
         url = f"{BASE_URL}v1/Games/ByGameName?apikey={API_KEY}&name={name}"
@@ -116,8 +121,8 @@ def fetch_game_data_by_name():
         last_search_results = games
         is_showing_detail = False
 
-        for widget in results_inner_frame.winfo_children():
-            widget.destroy()
+        for w in results_inner_frame.winfo_children():
+            w.destroy()
 
         if games:
             for game in games:
@@ -128,12 +133,17 @@ def fetch_game_data_by_name():
     except Exception as e:
         messagebox.showerror("Error", str(e))
 
+# ------------------ DETAILS ------------------
+
 def fetch_game_details(game_id):
     global is_showing_detail
     is_showing_detail = True
 
-    for widget in results_inner_frame.winfo_children():
-        widget.destroy()
+    for w in results_inner_frame.winfo_children():
+        w.destroy()
+
+    back_button.pack_forget()
+    back_button.pack(side="left")
 
     try:
         url = f"{BASE_URL}v1/Games/ByGameID?apikey={API_KEY}&id={game_id}&fields=overview,players,genres,release_date,platform,game_title"
@@ -150,85 +160,114 @@ def fetch_game_details(game_id):
             ("Description", game.get("overview") or "No description")
         ]
 
-        tk.Button(results_inner_frame, text="← Back",
-                  command=show_previous_results,
-                  bg="#BCBCBC", fg="red", bd=1.5, relief="solid").grid(row=0, column=0, sticky="w")
-
         for i, (label, value) in enumerate(fields, start=1):
-            tk.Label(results_inner_frame, text=label + ":", bg=BG, fg=FG,
+            tk.Label(results_inner_frame, text=label + ":",
+                     bg=BG, fg=FG,
                      font=("TkDefaultFont", 10, "bold")).grid(row=i, column=0, sticky="w")
 
-            tk.Label(results_inner_frame, text=value, bg=BG, fg=FG,
+            tk.Label(results_inner_frame, text=value,
+                     bg=BG, fg=FG,
                      wraplength=500).grid(row=i, column=1, sticky="w")
 
     except Exception as e:
         messagebox.showerror("Error", str(e))
 
+# ------------------ BACK ------------------
+
 def show_previous_results():
     global is_showing_detail
     is_showing_detail = False
 
-    for widget in results_inner_frame.winfo_children():
-        widget.destroy()
+    back_button.pack_forget()
+
+    for w in results_inner_frame.winfo_children():
+        w.destroy()
 
     for game in last_search_results:
         build_result_row(game)
 
+# ------------------ CLEAR ------------------
+
 def clear_search():
     entry_name.delete(0, tk.END)
-    for widget in results_inner_frame.winfo_children():
-        widget.destroy()
+    for w in results_inner_frame.winfo_children():
+        w.destroy()
+    back_button.pack_forget()
 
-# --- GUI SETUP ---
+# ------------------ GUI ------------------
+
 root = tk.Tk()
 root.title("TheGamesDB Browser")
 root.geometry("700x800")
 root.configure(bg=BG)
 
-# Top bar
+# ================= TOP BAR (FIXED CLEAN SPLIT) =================
+
 top_frame = tk.Frame(root, bg=BG)
-top_frame.pack(fill="x", pady=5, padx=10)
+top_frame.pack(fill="x", padx=10, pady=5)
 
-tk.Label(top_frame, text="Search:", bg=BG, fg=FG).pack(side="left")
+# LEFT SIDE ONLY BACK BUTTON
+left_bar = tk.Frame(top_frame, bg=BG)
+left_bar.pack(side="left")
 
-entry_name = tk.Entry(top_frame, width=30)
+back_button = tk.Button(
+    left_bar,
+    text="← Back",
+    command=show_previous_results,
+    bg=BG,
+    fg="red",
+    bd=1.5,
+    relief="solid"
+)
+
+# DO NOT PACK HERE (only in detail view)
+
+# RIGHT SIDE SEARCH AREA
+right_bar = tk.Frame(top_frame, bg=BG)
+right_bar.pack(side="left", fill="x", expand=True)
+
+tk.Label(right_bar, text="Search:", bg=BG, fg=FG).pack(side="left")
+
+entry_name = tk.Entry(right_bar, width=30)
 entry_name.pack(side="left", padx=5)
 
-tk.Button(top_frame, text="Search", command=fetch_game_data_by_name,
-          bg="#BCBCBC", fg="red", bd=1.5, relief="solid").pack(side="left", pady=10, padx=10)
+tk.Button(right_bar, text="Search",
+          command=fetch_game_data_by_name,
+          bg=BG, fg="red", bd=1.5, relief="solid").pack(side="left", padx=5)
 
-tk.Button(top_frame, text="Clear", command=clear_search,
-          bg="#BCBCBC", fg="red", bd=1.5, relief="solid").pack(side="left")
+tk.Button(right_bar, text="Clear",
+          command=clear_search,
+          bg=BG, fg="red", bd=1.5, relief="solid").pack(side="left", padx=5)
 
-# Main layout
+# ------------------ MAIN ------------------
+
 main_frame = tk.Frame(root, bg=BG)
 main_frame.pack(fill="both", expand=True)
 
-# LEFT: Filters
-filter_frame = tk.Frame(main_frame, width=150, bd=1, relief="solid", bg=BG)
+filter_frame = tk.Frame(main_frame, bg=BG, width=150, bd=1, relief="solid")
 filter_frame.pack(side="left", fill="y")
 
 tk.Label(filter_frame, text="Filters", bg=BG, fg=FG,
-         font=("TkDefaultFont", 12, "bold")).pack(pady=10, padx=10)
+         font=("TkDefaultFont", 12, "bold")).pack(pady=10)
 
-# Filter Buttons (UNCHANGED)
 tk.Button(filter_frame, text="NES",
           command=lambda: filter_by_platform("Nintendo Entertainment System"),
-          bg="#000000", fg="white", bd=0, width=15).pack(pady=10, padx=10)
+          bg="#000000", fg="white", bd=0, width=15).pack(pady=10)
 
 tk.Button(filter_frame, text="SEGA",
           command=lambda: filter_by_platform("Genesis"),
-          bg="#000000", fg="white", bd=0, width=15).pack(pady=10, padx=10)
+          bg="#000000", fg="white", bd=0, width=15).pack(pady=10)
 
 tk.Button(filter_frame, text="SNES",
           command=lambda: filter_by_platform("Super Nintendo"),
-          bg="#000000", fg="white", bd=0, width=15).pack(pady=10, padx=10)
+          bg="#000000", fg="white", bd=0, width=15).pack(pady=10)
 
 tk.Button(filter_frame, text="All",
           command=show_previous_results,
-          bg="#000000", fg="white", bd=0, width=15).pack(pady=10, padx=10)
+          bg="#000000", fg="white", bd=0, width=15).pack(pady=10)
 
-# RIGHT: Scrollable results
+# ------------------ RESULTS ------------------
+
 results_container = tk.Frame(main_frame, bg=BG)
 results_container.pack(side="right", fill="both", expand=True)
 
@@ -236,6 +275,7 @@ results_canvas = tk.Canvas(results_container, bg=BG, highlightthickness=0)
 scrollbar = tk.Scrollbar(results_container, command=results_canvas.yview)
 
 results_inner_frame = tk.Frame(results_canvas, bg=BG)
+
 results_inner_frame.bind(
     "<Configure>",
     lambda e: results_canvas.configure(scrollregion=results_canvas.bbox("all"))
@@ -247,9 +287,9 @@ results_canvas.configure(yscrollcommand=scrollbar.set)
 results_canvas.pack(side="left", fill="both", expand=True)
 scrollbar.pack(side="right", fill="y")
 
-# Load data
+# ------------------ INIT ------------------
+
 load_platforms()
 load_genres()
 
-# Run app
 root.mainloop()
