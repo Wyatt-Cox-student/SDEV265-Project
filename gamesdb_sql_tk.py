@@ -224,21 +224,26 @@ back_button = tk.Button(
 # DO NOT PACK HERE (only in detail view)
 
 # RIGHT SIDE SEARCH AREA
+# RIGHT SIDE SEARCH AREA
 right_bar = tk.Frame(top_frame, bg=BG)
 right_bar.pack(side="left", fill="x", expand=True)
 
-tk.Label(right_bar, text="Search:", bg=BG, fg=FG).pack(side="left")
+# CENTER CONTAINER
+search_container = tk.Frame(right_bar, bg=BG)
+search_container.pack(expand=True)  # this centers it horizontally
 
-entry_name = tk.Entry(right_bar, width=30)
+tk.Label(search_container, text="Search:", bg=BG, fg=FG).pack(side="left")
+
+entry_name = tk.Entry(search_container, width=30)
 entry_name.pack(side="left", padx=5)
 
-tk.Button(right_bar, text="Search",
+tk.Button(search_container, text="Search",
           command=fetch_game_data_by_name,
-          bg=BG, fg="red", bd=1.5, relief="solid", width= 10).pack(side="left", padx=5)
+          bg=BG, fg="red", bd=1.5, relief="solid", width=10).pack(side="left", padx=5)
 
-tk.Button(right_bar, text="Clear",
+tk.Button(search_container, text="Clear",
           command=clear_search,
-          bg=BG, fg="red", bd=1.5, relief="solid", width= 10).pack(side="left", padx=5)
+          bg=BG, fg="red", bd=1.5, relief="solid", width=10).pack(side="left", padx=5)
 
 # ------------------ MAIN ------------------
 
