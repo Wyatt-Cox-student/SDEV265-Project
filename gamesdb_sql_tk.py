@@ -254,23 +254,23 @@ filter_frame = tk.Frame(main_frame, bg=BG, width=150, bd=1, relief="solid")
 filter_frame.pack(side="left", fill="y")
 
 tk.Label(filter_frame, text="Filters", bg="#000000", fg="white",
-         font=("TkDefaultFont", 12, "bold"), width=15, height = 2).pack(pady=10)
+         font=("TkDefaultFont", 12, "bold"), width=15, height = 2).pack(pady=10, padx = 10)
 
 tk.Button(filter_frame, text="NES",
           command=lambda: filter_by_platform("Nintendo Entertainment System"),
-          bg="#000000", fg="white", bd=0, width=15).pack(pady=5)
+          bg="#000000", fg="white", bd=0, width=15).pack(pady=5, padx = 10)
 
 tk.Button(filter_frame, text="SEGA",
           command=lambda: filter_by_platform("Genesis"),
-          bg="#000000", fg="white", bd=0, width=15).pack(pady=5)
+          bg="#000000", fg="white", bd=0, width=15).pack(pady=5, padx = 10)
 
 tk.Button(filter_frame, text="SNES",
           command=lambda: filter_by_platform("Super Nintendo"),
-          bg="#000000", fg="white", bd=0, width=15).pack(pady=5)
+          bg="#000000", fg="white", bd=0, width=15).pack(pady=5, padx = 10)
 
 tk.Button(filter_frame, text="All",
           command=show_previous_results,
-          bg="#000000", fg="white", bd=0, width=15).pack(pady=5)
+          bg="#000000", fg="white", bd=0, width=15).pack(pady=5, padx = 10)
 
 # ------------------ RESULTS ------------------
 
