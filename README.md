@@ -4,7 +4,7 @@ Public API Key: 7a5185043b9c80de440a54ba097dd8a107de762bdd7d7977990b1be306a3e830
 
 ## to do
 
-relocate the back button to the left side of the search entry field
+relocate the back button to the left side of the search entry field (done)
 
 work on getting images pulled from thegamesdb.net
 
