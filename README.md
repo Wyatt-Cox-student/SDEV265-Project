@@ -21,9 +21,9 @@ add more to filter/search (search/filter by console, year, genre and other info 
 work on getting images pulled from thegamesdb.net
 
 # style ideas
-search, clear, and back buttons grey background, black outline, and red text.
+search, clear, and back buttons grey background, black outline, and red text. (done)
 
-filters (buttons) on side white text on black background 0 border.
+filters (buttons) on side white text on black background 0 border. (done)
 
 limit 20 per page and have multiple pages you can click through like google?
 
