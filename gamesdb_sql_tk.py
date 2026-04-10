@@ -145,7 +145,7 @@ def fetch_game_details(game_id):
         ]
 
         tk.Button(results_inner_frame, text="← Back",
-                  command=show_previous_results, bg="#BCBCBC", fg="red", bd=1.5, relief="solid").grid(row=0, column=0, sticky="w")
+                  command=show_previous_results, fg="red", bd=1.5, relief="solid").grid(row=0, column=0, sticky="w")
 
         for i, (label, value) in enumerate(fields, start=1):
             tk.Label(results_inner_frame, text=label + ":", font=("TkDefaultFont", 10, "bold")).grid(row=i, column=0, sticky="w")
@@ -182,8 +182,8 @@ tk.Label(top_frame, text="Search:").pack(side="left")
 entry_name = tk.Entry(top_frame, width=30)
 entry_name.pack(side="left", padx=5)
 
-tk.Button(top_frame, text="Search", command=fetch_game_data_by_name, bg="#BCBCBC", fg="red", bd=1.5, relief="solid").pack(side="left", pady=10, padx = 10)
-tk.Button(top_frame, text="Clear", command=clear_search, bg="#BCBCBC", fg="red", bd=1.5, relief="solid").pack(side="left")
+tk.Button(top_frame, text="Search", command=fetch_game_data_by_name, fg="red", bd=1.5, relief="solid").pack(side="left", pady=10, padx = 10)
+tk.Button(top_frame, text="Clear", command=clear_search, fg="red", bd=1.5, relief="solid").pack(side="left")
 
 # Main layout
 main_frame = tk.Frame(root)
