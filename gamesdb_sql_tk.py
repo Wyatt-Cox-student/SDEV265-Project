@@ -198,7 +198,7 @@ def clear_search():
 
 root = tk.Tk()
 root.title("TheGamesDB Browser")
-root.geometry("760x800")
+root.geometry("800x800")
 root.configure(bg=BG)
 
 # ================= TOP BAR (FIXED CLEAN SPLIT) =================
@@ -230,7 +230,7 @@ right_bar.pack(side="left", fill="x", expand=True)
 
 # CENTER CONTAINER
 search_container = tk.Frame(right_bar, bg=BG)
-search_container.pack(expand=True)  # this centers it horizontally
+search_container.pack(side="right")  # this centers it horizontally
 
 tk.Label(search_container, text="Search:", bg=BG, fg=FG).pack(side="left")
 
