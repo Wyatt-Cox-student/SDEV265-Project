@@ -214,11 +214,11 @@ back_button = tk.Button(
     left_bar,
     text="← Back",
     command=show_previous_results,
-    bg=BG,
+    bg="#9F9F9F",
     fg="red",
     bd=1.5,
     relief="solid",
-    width= 7
+    width= 13
 )
 
 
