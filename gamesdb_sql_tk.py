@@ -198,7 +198,7 @@ def clear_search():
 
 root = tk.Tk()
 root.title("TheGamesDB Browser")
-root.geometry("800x800")
+root.geometry("810x810")
 root.configure(bg=BG)
 
 # ================= TOP BAR (FIXED CLEAN SPLIT) =================
