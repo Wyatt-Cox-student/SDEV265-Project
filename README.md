@@ -6,6 +6,8 @@ Public API Key: 7a5185043b9c80de440a54ba097dd8a107de762bdd7d7977990b1be306a3e830
 
 relocate the back button to the left side of the search entry field
 
+work on getting images pulled from thegamesdb.net
+
 connect to thegamesdb.net (done)
 
 data that we need to pull from thegamesdb.net 
@@ -18,7 +20,7 @@ work on layout and design
 
 add more to filter/search (search/filter by console, year, genre and other info not added yet)
 
-work on getting images pulled from thegamesdb.net
+
 
 # style ideas
 search, clear, and back buttons grey background, black outline, and red text. (done)
