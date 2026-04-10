@@ -237,11 +237,11 @@ entry_name.pack(side="left", padx=5)
 
 tk.Button(search_container, text="Search",
           command=fetch_game_data_by_name,
-          bg=BG, fg="red", bd=1.5, relief="solid", width=10).pack(side="left", padx=5)
+          bg=BG, fg="red", bd=1.5, relief="solid", width=10).pack(side="left", padx=5, pady = 5)
 
 tk.Button(search_container, text="Clear",
           command=clear_search,
-          bg=BG, fg="red", bd=1.5, relief="solid", width=10).pack(side="left", padx=5)
+          bg=BG, fg="red", bd=1.5, relief="solid", width=10).pack(side="left", padx=5, pady = 5)
 
 # ------------------ MAIN ------------------
 
