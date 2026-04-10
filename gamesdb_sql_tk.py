@@ -228,7 +228,7 @@ right_bar.pack(side="left", fill="x", expand=True)
 
 # Right align CONTAINER
 search_container = tk.Frame(right_bar, bg=BG)
-search_container.pack(side="right")  # this centers it horizontally
+search_container.pack(side="right")
 
 tk.Label(search_container, text="Search:", bg=BG, fg=FG).pack(side="left")
 
