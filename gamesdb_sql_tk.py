@@ -223,12 +223,12 @@ back_button = tk.Button(
 
 # DO NOT PACK HERE (only in detail view)
 
-# RIGHT SIDE SEARCH AREA
+
 # RIGHT SIDE SEARCH AREA
 right_bar = tk.Frame(top_frame, bg=BG)
 right_bar.pack(side="left", fill="x", expand=True)
 
-# CENTER CONTAINER
+# Right align CONTAINER
 search_container = tk.Frame(right_bar, bg=BG)
 search_container.pack(side="right")  # this centers it horizontally
 
