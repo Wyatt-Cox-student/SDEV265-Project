@@ -193,21 +193,21 @@ main_frame.pack(fill="both", expand=True)
 filter_frame = tk.Frame(main_frame, width=150, bd=1, relief="solid")
 filter_frame.pack(side="left", fill="y")
 
-tk.Label(filter_frame, text="Filters", font=("TkDefaultFont", 12, "bold")).pack(pady=10)
+tk.Label(filter_frame, text="Filters", font=("TkDefaultFont", 12, "bold")).pack(pady=10, padx = 10)
 
 #Filter Buttons
 tk.Button(filter_frame, text="NES",
-          command=lambda: filter_by_platform("Nintendo Entertainment System")).pack(pady=5)
+          command=lambda: filter_by_platform("Nintendo Entertainment System"), bg="#000000", fg="white", bd=0, width= 15).pack(pady=10, padx = 10)
 
 tk.Button(filter_frame, text="SEGA",
-          command=lambda: filter_by_platform("Genesis")).pack(pady=5)
+          command=lambda: filter_by_platform("Genesis"), bg="#000000", fg="white", bd=0, width= 15).pack(pady=10, padx = 10)
 
 tk.Button(filter_frame, text="SNES",
-          command=lambda: filter_by_platform("Super Nintendo")).pack(pady=5)
+          command=lambda: filter_by_platform("Super Nintendo"), bg="#000000", fg="white", bd=0, width= 15).pack(pady=10, padx = 10)
 
 
 tk.Button(filter_frame, text="All",
-          command=show_previous_results).pack(pady=10)
+          command=show_previous_results , bg="#000000", fg="white", bd=0, width= 15).pack(pady=10, padx = 10)
 
 # RIGHT: Scrollable results
 results_container = tk.Frame(main_frame)
