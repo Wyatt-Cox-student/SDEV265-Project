@@ -2,6 +2,10 @@ import tkinter as tk
 from tkinter import messagebox
 import requests
 
+# --- COLORS ---
+BG = "#BCBCBC"
+FG = "black"
+
 # --- API Configuration ---
 API_KEY = '7a5185043b9c80de440a54ba097dd8a107de762bdd7d7977990b1be306a3e830'
 BASE_URL = 'https://api.thegamesdb.net/'
@@ -58,7 +62,7 @@ def filter_by_platform(platform_keyword):
     pid = find_platform_id_by_name(platform_keyword)
 
     if not pid:
-        tk.Label(results_inner_frame, text="Platform not found.").pack()
+        tk.Label(results_inner_frame, text="Platform not found.", bg=BG, fg=FG).pack()
         return
 
     filtered = [g for g in last_search_results if g.get("platform") == pid]
@@ -67,7 +71,7 @@ def filter_by_platform(platform_keyword):
         for game in filtered:
             build_result_row(game)
     else:
-        tk.Label(results_inner_frame, text="No games match this filter.").pack()
+        tk.Label(results_inner_frame, text="No games match this filter.", bg=BG, fg=FG).pack()
 
 # --- UI Builders ---
 def build_result_row(game):
@@ -76,14 +80,16 @@ def build_result_row(game):
     release_date = game.get("release_date", "Unknown")
     platform_name = get_platform_name(game.get("platform"))
 
-    row = tk.Frame(results_inner_frame, padx=4, pady=6)
+    row = tk.Frame(results_inner_frame, padx=4, pady=6, bg=BG)
     row.pack(fill="x", pady=2)
 
-    title_lbl = tk.Label(row, text=title, fg="blue", cursor="hand2",
+    title_lbl = tk.Label(row, text=title, fg="blue", bg=BG,
+                         cursor="hand2",
                          font=("TkDefaultFont", 10, "underline"))
     title_lbl.pack(fill="x")
 
-    meta_lbl = tk.Label(row, text=f"{platform_name} • {release_date}", fg="gray")
+    meta_lbl = tk.Label(row, text=f"{platform_name} • {release_date}",
+                        fg="gray", bg=BG)
     meta_lbl.pack(fill="x")
 
     def on_click(event=None):
@@ -117,7 +123,7 @@ def fetch_game_data_by_name():
             for game in games:
                 build_result_row(game)
         else:
-            tk.Label(results_inner_frame, text="No games found.").pack()
+            tk.Label(results_inner_frame, text="No games found.", bg=BG, fg=FG).pack()
 
     except Exception as e:
         messagebox.showerror("Error", str(e))
@@ -145,11 +151,15 @@ def fetch_game_details(game_id):
         ]
 
         tk.Button(results_inner_frame, text="← Back",
-                  command=show_previous_results, fg="red", bd=1.5, relief="solid").grid(row=0, column=0, sticky="w")
+                  command=show_previous_results,
+                  bg="#BCBCBC", fg="red", bd=1.5, relief="solid").grid(row=0, column=0, sticky="w")
 
         for i, (label, value) in enumerate(fields, start=1):
-            tk.Label(results_inner_frame, text=label + ":", font=("TkDefaultFont", 10, "bold")).grid(row=i, column=0, sticky="w")
-            tk.Label(results_inner_frame, text=value, wraplength=500).grid(row=i, column=1, sticky="w")
+            tk.Label(results_inner_frame, text=label + ":", bg=BG, fg=FG,
+                     font=("TkDefaultFont", 10, "bold")).grid(row=i, column=0, sticky="w")
+
+            tk.Label(results_inner_frame, text=value, bg=BG, fg=FG,
+                     wraplength=500).grid(row=i, column=1, sticky="w")
 
     except Exception as e:
         messagebox.showerror("Error", str(e))
@@ -173,50 +183,59 @@ def clear_search():
 root = tk.Tk()
 root.title("TheGamesDB Browser")
 root.geometry("700x800")
+root.configure(bg=BG)
 
 # Top bar
-top_frame = tk.Frame(root)
+top_frame = tk.Frame(root, bg=BG)
 top_frame.pack(fill="x", pady=5, padx=10)
 
-tk.Label(top_frame, text="Search:").pack(side="left")
+tk.Label(top_frame, text="Search:", bg=BG, fg=FG).pack(side="left")
+
 entry_name = tk.Entry(top_frame, width=30)
 entry_name.pack(side="left", padx=5)
 
-tk.Button(top_frame, text="Search", command=fetch_game_data_by_name, fg="red", bd=1.5, relief="solid").pack(side="left", pady=10, padx = 10)
-tk.Button(top_frame, text="Clear", command=clear_search, fg="red", bd=1.5, relief="solid").pack(side="left")
+tk.Button(top_frame, text="Search", command=fetch_game_data_by_name,
+          bg="#BCBCBC", fg="red", bd=1.5, relief="solid").pack(side="left", pady=10, padx=10)
+
+tk.Button(top_frame, text="Clear", command=clear_search,
+          bg="#BCBCBC", fg="red", bd=1.5, relief="solid").pack(side="left")
 
 # Main layout
-main_frame = tk.Frame(root)
+main_frame = tk.Frame(root, bg=BG)
 main_frame.pack(fill="both", expand=True)
 
 # LEFT: Filters
-filter_frame = tk.Frame(main_frame, width=150, bd=1, relief="solid")
+filter_frame = tk.Frame(main_frame, width=150, bd=1, relief="solid", bg=BG)
 filter_frame.pack(side="left", fill="y")
 
-tk.Label(filter_frame, text="Filters", font=("TkDefaultFont", 12, "bold")).pack(pady=10, padx = 10)
+tk.Label(filter_frame, text="Filters", bg=BG, fg=FG,
+         font=("TkDefaultFont", 12, "bold")).pack(pady=10, padx=10)
 
-#Filter Buttons
+# Filter Buttons (UNCHANGED)
 tk.Button(filter_frame, text="NES",
-          command=lambda: filter_by_platform("Nintendo Entertainment System"), bg="#000000", fg="white", bd=0, width= 15).pack(pady=10, padx = 10)
+          command=lambda: filter_by_platform("Nintendo Entertainment System"),
+          bg="#000000", fg="white", bd=0, width=15).pack(pady=10, padx=10)
 
 tk.Button(filter_frame, text="SEGA",
-          command=lambda: filter_by_platform("Genesis"), bg="#000000", fg="white", bd=0, width= 15).pack(pady=10, padx = 10)
+          command=lambda: filter_by_platform("Genesis"),
+          bg="#000000", fg="white", bd=0, width=15).pack(pady=10, padx=10)
 
 tk.Button(filter_frame, text="SNES",
-          command=lambda: filter_by_platform("Super Nintendo"), bg="#000000", fg="white", bd=0, width= 15).pack(pady=10, padx = 10)
-
+          command=lambda: filter_by_platform("Super Nintendo"),
+          bg="#000000", fg="white", bd=0, width=15).pack(pady=10, padx=10)
 
 tk.Button(filter_frame, text="All",
-          command=show_previous_results , bg="#000000", fg="white", bd=0, width= 15).pack(pady=10, padx = 10)
+          command=show_previous_results,
+          bg="#000000", fg="white", bd=0, width=15).pack(pady=10, padx=10)
 
 # RIGHT: Scrollable results
-results_container = tk.Frame(main_frame)
+results_container = tk.Frame(main_frame, bg=BG)
 results_container.pack(side="right", fill="both", expand=True)
 
-results_canvas = tk.Canvas(results_container)
+results_canvas = tk.Canvas(results_container, bg=BG, highlightthickness=0)
 scrollbar = tk.Scrollbar(results_container, command=results_canvas.yview)
 
-results_inner_frame = tk.Frame(results_canvas)
+results_inner_frame = tk.Frame(results_canvas, bg=BG)
 results_inner_frame.bind(
     "<Configure>",
     lambda e: results_canvas.configure(scrollregion=results_canvas.bbox("all"))
