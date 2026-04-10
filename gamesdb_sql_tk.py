@@ -258,19 +258,19 @@ tk.Label(filter_frame, text="Filters", bg="#000000", fg="white",
 
 tk.Button(filter_frame, text="NES",
           command=lambda: filter_by_platform("Nintendo Entertainment System"),
-          bg="#000000", fg="white", bd=0, width=15).pack(pady=10)
+          bg="#000000", fg="white", bd=0, width=15).pack(pady=5)
 
 tk.Button(filter_frame, text="SEGA",
           command=lambda: filter_by_platform("Genesis"),
-          bg="#000000", fg="white", bd=0, width=15).pack(pady=10)
+          bg="#000000", fg="white", bd=0, width=15).pack(pady=5)
 
 tk.Button(filter_frame, text="SNES",
           command=lambda: filter_by_platform("Super Nintendo"),
-          bg="#000000", fg="white", bd=0, width=15).pack(pady=10)
+          bg="#000000", fg="white", bd=0, width=15).pack(pady=5)
 
 tk.Button(filter_frame, text="All",
           command=show_previous_results,
-          bg="#000000", fg="white", bd=0, width=15).pack(pady=10)
+          bg="#000000", fg="white", bd=0, width=15).pack(pady=5)
 
 # ------------------ RESULTS ------------------
 
