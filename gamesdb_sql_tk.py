@@ -206,7 +206,7 @@ root.configure(bg=BG)
 top_frame = tk.Frame(root, bg=BG)
 top_frame.pack(fill="x", padx=10, pady=5)
 
-# LEFT SIDE ONLY BACK BUTTON
+# BACK BUTTON
 left_bar = tk.Frame(top_frame, bg=BG)
 left_bar.pack(side="left")
 
@@ -222,13 +222,13 @@ back_button = tk.Button(
 )
 
 
-# RIGHT SIDE SEARCH AREA
+# SEARCH AREA
 right_bar = tk.Frame(top_frame, bg=BG)
 right_bar.pack(side="left", fill="x", expand=True)
 
 # Right align CONTAINER
 search_container = tk.Frame(right_bar, bg=BG)
-search_container.pack(side="right")
+search_container.pack(anchor = "center")
 
 tk.Label(search_container, text="Search:", bg=BG, fg=FG).pack(side="left")
 
@@ -286,7 +286,15 @@ results_inner_frame.bind(
     lambda e: results_canvas.configure(scrollregion=results_canvas.bbox("all"))
 )
 
-results_canvas.create_window((0, 0), window=results_inner_frame, anchor="nw")
+# create window and keep a reference
+inner_window = results_canvas.create_window((0, 0), window=results_inner_frame, anchor="nw")
+
+# ensure inner frame always matches canvas width
+def _on_canvas_configure(event):
+    results_canvas.itemconfig(inner_window, width=event.width)
+
+results_canvas.bind("<Configure>", _on_canvas_configure)
+
 results_canvas.configure(yscrollcommand=scrollbar.set)
 
 results_canvas.pack(side="left", fill="both", expand=True)
