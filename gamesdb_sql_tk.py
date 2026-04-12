@@ -238,20 +238,26 @@ entry_name.pack(side="left", padx=5)
 
 # ----------------- BUTTON CONTAINER -----------------
 buttons_container = tk.Frame(search_container, bg=BG)
-buttons_container.pack(side="left", padx=5) 
+buttons_container.pack(side="left", padx=5)
+
+# ----------------- GRID BUTTONS -----------------
+
+buttons_container.grid_columnconfigure(0, minsize=90) 
+buttons_container.grid_columnconfigure(1, minsize=90)  
+
+buttons_container.grid_rowconfigure(0, weight=1, minsize=30)
 
 # Search Button
 search_button = tk.Button(buttons_container, text="Search",
                           command=fetch_game_data_by_name,
                           bg=BG, fg="red", bd=1.5, relief="solid", width=9)
-search_button.pack(side="left", padx=5, pady=5) 
+search_button.grid(row=0, column=0, padx=5, pady=5)
 
 # Clear Button
 clear_button = tk.Button(buttons_container, text="Clear",
                          command=clear_search,
                          bg=BG, fg="red", bd=1.5, relief="solid", width=9)
-clear_button.pack(side="left", padx=5, pady=5)
-
+clear_button.grid(row=0, column=1, padx=5, pady=5)
 # ------------------ MAIN ------------------
 
 main_frame = tk.Frame(root, bg=BG)
