@@ -207,18 +207,19 @@ top_frame = tk.Frame(root, bg=BG)
 top_frame.pack(fill="x", padx=10, pady=5)
 
 # BACK BUTTON
-left_bar = tk.Frame(top_frame, bg=BG)
-left_bar.pack(side="left")
+left_bar = tk.Frame(top_frame, bg=BG, width=160)
+left_bar.pack(side="left", fill="y",padx=(25, 3))
+left_bar.pack_propagate(False)
 
 back_button = tk.Button(
     left_bar,
     text="← Back",
     command=show_previous_results,
     bg="#9F9F9F",
-    fg="red",
+    fg="white",
     bd=1.5,
     relief="solid",
-    width= 13
+    width= 12
 )
 
 
@@ -237,11 +238,11 @@ entry_name.pack(side="left", padx=5)
 
 tk.Button(search_container, text="Search",
           command=fetch_game_data_by_name,
-          bg=BG, fg="red", bd=1.5, relief="solid", width=10).pack(side="left", padx=5, pady = 5)
+          bg=BG, fg="red", bd=1.5, relief="solid", width=9).pack(side="left", padx=5, pady = 5)
 
 tk.Button(search_container, text="Clear",
           command=clear_search,
-          bg=BG, fg="red", bd=1.5, relief="solid", width=10).pack(side="left", padx=5, pady = 5)
+          bg=BG, fg="red", bd=1.5, relief="solid", width=9).pack(side="left", padx=5, pady = 5)
 
 # ------------------ MAIN ------------------
 
