@@ -227,22 +227,30 @@ back_button = tk.Button(
 right_bar = tk.Frame(top_frame, bg=BG)
 right_bar.pack(side="left", fill="x", expand=True)
 
-# Right align CONTAINER
+# Search CONTAINER
 search_container = tk.Frame(right_bar, bg=BG)
-search_container.pack(anchor = "center")
+search_container.pack(anchor="center")
 
 tk.Label(search_container, text="Search:", bg=BG, fg=FG).pack(side="left")
 
 entry_name = tk.Entry(search_container, width=30)
 entry_name.pack(side="left", padx=5)
 
-tk.Button(search_container, text="Search",
-          command=fetch_game_data_by_name,
-          bg=BG, fg="red", bd=1.5, relief="solid", width=9).pack(side="left", padx=5, pady = 5)
+# ----------------- BUTTON CONTAINER -----------------
+buttons_container = tk.Frame(search_container, bg=BG)
+buttons_container.pack(side="left", padx=5) 
 
-tk.Button(search_container, text="Clear",
-          command=clear_search,
-          bg=BG, fg="red", bd=1.5, relief="solid", width=9).pack(side="left", padx=5, pady = 5)
+# Search Button
+search_button = tk.Button(buttons_container, text="Search",
+                          command=fetch_game_data_by_name,
+                          bg=BG, fg="red", bd=1.5, relief="solid", width=9)
+search_button.pack(side="left", padx=5, pady=5) 
+
+# Clear Button
+clear_button = tk.Button(buttons_container, text="Clear",
+                         command=clear_search,
+                         bg=BG, fg="red", bd=1.5, relief="solid", width=9)
+clear_button.pack(side="left", padx=5, pady=5)
 
 # ------------------ MAIN ------------------
 
