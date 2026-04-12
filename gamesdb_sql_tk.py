@@ -249,13 +249,19 @@ buttons_container.grid_rowconfigure(0, weight=1, minsize=30)
 # Search Button
 search_button = ctk.CTkButton(buttons_container, text="Search",
                                command=fetch_game_data_by_name,
-                               bg_color=BG, fg_color=BG, text_color="red", font=("TkDefaultFont", 13, "bold"),  border_width=2, border_color="black", width=100, height=30)
+                               bg_color=BG, fg_color=BG, 
+                               text_color="red", font=("TkDefaultFont", 13, "bold"),  
+                               border_width=2, border_color="black", 
+                               width=100, height=30)
 search_button.grid(row=0, column=0, padx=5, pady=5)
 
 # Clear Button
 clear_button = ctk.CTkButton(buttons_container, text="Clear",
                               command=clear_search,
-                              bg_color=BG, fg_color=BG, text_color="red", font=("TkDefaultFont", 13, "bold"), border_width=2, border_color="black",  width=100, height=30)  
+                              bg_color=BG, fg_color=BG, 
+                              text_color="red", font=("TkDefaultFont", 13, "bold"), 
+                              border_width=2, border_color="black",  
+                              width=100, height=30)  
 clear_button.grid(row=0, column=1, padx=5, pady=5)
 
 # ------------------ MAIN ------------------
