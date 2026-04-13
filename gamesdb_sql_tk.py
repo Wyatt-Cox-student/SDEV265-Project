@@ -83,23 +83,54 @@ def build_result_row(game):
     release_date = game.get("release_date", "Unknown")
     platform_name = get_platform_name(game.get("platform"))
 
-    row = tk.Frame(results_inner_frame, bg=BG, padx=4, pady=6)
+    normal_bg = BG
+    hover_bg = "#A8A8A8"
+
+    row = tk.Frame(results_inner_frame, bg=normal_bg, padx=4, pady=6)
     row.pack(fill="x", pady=2)
 
-    title_lbl = tk.Label(row, text=title, fg="blue", bg=BG,
-                         cursor="hand2",
-                         font=("TkDefaultFont", 10, "underline"))
+    title_lbl = tk.Label(
+        row,
+        text=title,
+        fg="blue",
+        bg=normal_bg,
+        cursor="hand2",
+        font=("TkDefaultFont", 10, "underline")
+    )
     title_lbl.pack(fill="x")
 
-    meta_lbl = tk.Label(row, text=f"{platform_name} • {release_date}",
-                        fg="gray", bg=BG)
+    meta_lbl = tk.Label(
+        row,
+        text=f"{platform_name} • {release_date}",
+        fg="gray",
+        bg=normal_bg
+    )
     meta_lbl.pack(fill="x")
 
     def on_click(e=None):
         fetch_game_details(game_id)
 
+    def on_enter(e=None):
+        row.config(bg=hover_bg)
+        title_lbl.config(bg=hover_bg)
+        meta_lbl.config(bg=hover_bg)
+
+    def on_leave(e=None):
+        row.config(bg=normal_bg)
+        title_lbl.config(bg=normal_bg)
+        meta_lbl.config(bg=normal_bg)
+
+    row.bind("<Button-1>", on_click)
     title_lbl.bind("<Button-1>", on_click)
     meta_lbl.bind("<Button-1>", on_click)
+
+    row.bind("<Enter>", on_enter)
+    title_lbl.bind("<Enter>", on_enter)
+    meta_lbl.bind("<Enter>", on_enter)
+
+    row.bind("<Leave>", on_leave)
+    title_lbl.bind("<Leave>", on_leave)
+    meta_lbl.bind("<Leave>", on_leave)
 
 # ------------------ SEARCH ------------------
 
