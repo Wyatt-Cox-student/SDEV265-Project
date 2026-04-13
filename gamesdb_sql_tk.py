@@ -8,7 +8,7 @@ BG = "#BCBCBC"
 FG = "black"
 
 # --- API CONFIG ---
-API_KEY = '7a5185043b9c80de440a54ba097dd8a107de762bdd7d7977990b1be306a3e830'
+API_KEY = '7a5185043b9c80de440a54ba097dd8a107de762bdd7d7977990b1be306a3e830' #<- change the number between the '' to your API Key
 BASE_URL = 'https://api.thegamesdb.net/'
 
 # --- GLOBAL STATE ---

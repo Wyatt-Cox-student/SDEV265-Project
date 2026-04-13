@@ -8,7 +8,7 @@ BG = "#BCBCBC"
 FG = "black"
 
 # --- API CONFIG ---
-API_KEY = '7a5185043b9c80de440a54ba097dd8a107de762bdd7d7977990b1be306a3e830'
+API_KEY = '7a5185043b9c80de440a54ba097dd8a107de762bdd7d7977990b1be306a3e830' #<- change the number between the '' to your API Key
 BASE_URL = 'https://api.thegamesdb.net/'
 
 # --- GLOBAL STATE ---
@@ -63,7 +63,7 @@ def set_filter_button_styles():
     normal_bg = "#000000"
     normal_fg = "white"
     selected_bg = "#4A4A4A"
-    selected_fg = "yellow"
+    selected_fg = "red"
 
     for filter_name, button in filter_buttons.items():
         if filter_name == active_filter:
