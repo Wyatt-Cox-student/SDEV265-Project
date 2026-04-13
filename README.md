@@ -2,6 +2,8 @@
 
 Teresa's Public API Key: 7a5185043b9c80de440a54ba097dd8a107de762bdd7d7977990b1be306a3e830
 
+Backup alt API Key: 1b2b1e65b282ff78c4345dfc6dccc509bd50baeeb7b00abfb7533c23f15a962c
+
 ## to do
 
 relocate the back button to the left side of the search entry field (done)
@@ -28,6 +30,8 @@ search, clear, and back buttons grey background, black outline, and red text. (d
 filters (buttons) on side white text on black background 0 border. (done)
 
 limit 20 per page and have multiple pages you can click through like google?
+
+hover color dark grey for top buttons
 
 ## currently has
 
