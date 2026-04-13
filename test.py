@@ -16,6 +16,8 @@ platform_cache = {}
 genre_cache = {}
 last_search_results = []
 is_showing_detail = False
+active_filter = None
+filter_buttons = {}
 
 # ------------------ DATA ------------------
 
@@ -57,9 +59,44 @@ def find_platform_id_by_name(search_name):
             return pid
     return None
 
-def filter_by_platform(platform_keyword):
+def set_filter_button_styles():
+    normal_bg = "#000000"
+    normal_fg = "white"
+    selected_bg = "#4A4A4A"
+    selected_fg = "yellow"
+
+    for filter_name, button in filter_buttons.items():
+        if filter_name == active_filter:
+            button.config(bg=selected_bg, fg=selected_fg)
+        else:
+            button.config(bg=normal_bg, fg=normal_fg)
+
+
+def apply_filter(filter_name, platform_keyword=None):
+    global active_filter
+
+    if active_filter == filter_name:
+        active_filter = None
+
+        for w in results_inner_frame.winfo_children():
+            w.destroy()
+
+        for game in last_search_results:
+            build_result_row(game)
+
+        set_filter_button_styles()
+        return
+
+    active_filter = filter_name
+    set_filter_button_styles()
+
     for w in results_inner_frame.winfo_children():
         w.destroy()
+
+    if filter_name == "All":
+        for game in last_search_results:
+            build_result_row(game)
+        return
 
     pid = find_platform_id_by_name(platform_keyword)
 
@@ -74,6 +111,9 @@ def filter_by_platform(platform_keyword):
             build_result_row(game)
     else:
         tk.Label(results_inner_frame, text="No games match this filter.", bg=BG, fg=FG).pack()
+
+def filter_by_platform(filter_name, platform_keyword):
+    apply_filter(filter_name, platform_keyword)
 
 # ------------------ UI ROW ------------------
 
@@ -207,8 +247,9 @@ def fetch_game_details(game_id):
 # ------------------ BACK ------------------
 
 def show_previous_results():
-    global is_showing_detail
+    global is_showing_detail, active_filter
     is_showing_detail = False
+    active_filter = "All"
 
     back_button.pack_forget()
 
@@ -218,13 +259,20 @@ def show_previous_results():
     for game in last_search_results:
         build_result_row(game)
 
+    set_filter_button_styles()
+
 # ------------------ CLEAR ------------------
 
 def clear_search():
+    global active_filter
     entry_name.delete(0, tk.END)
+    active_filter = None
+
     for w in results_inner_frame.winfo_children():
         w.destroy()
+
     back_button.pack_forget()
+    set_filter_button_styles()
 
 # ------------------ GUI ------------------
 
@@ -307,21 +355,56 @@ tk.Label(filter_frame, text="Filters", bg="#000000", fg="white",
          font=("TkDefaultFont", 12, "bold"), width=15, height = 2).pack(pady=10, padx = 10)
 
 # Filter Buttons
-tk.Button(filter_frame, text="NES",
-          command=lambda: filter_by_platform("Nintendo Entertainment System"),
-          bg="#000000", fg="white", bd=0, width=15).pack(pady=5, padx = 10)
+nes_button = tk.Button(
+    filter_frame,
+    text="NES",
+    command=lambda: filter_by_platform("NES", "Nintendo Entertainment System"),
+    bg="#000000",
+    fg="white",
+    bd=0,
+    width=15
+)
+nes_button.pack(pady=5, padx=10)
 
-tk.Button(filter_frame, text="SEGA",
-          command=lambda: filter_by_platform("Genesis"),
-          bg="#000000", fg="white", bd=0, width=15).pack(pady=5, padx = 10)
+sega_button = tk.Button(
+    filter_frame,
+    text="SEGA",
+    command=lambda: filter_by_platform("SEGA", "Genesis"),
+    bg="#000000",
+    fg="white",
+    bd=0,
+    width=15
+)
+sega_button.pack(pady=5, padx=10)
 
-tk.Button(filter_frame, text="SNES",
-          command=lambda: filter_by_platform("Super Nintendo"),
-          bg="#000000", fg="white", bd=0, width=15).pack(pady=5, padx = 10)
+snes_button = tk.Button(
+    filter_frame,
+    text="SNES",
+    command=lambda: filter_by_platform("SNES", "Super Nintendo"),
+    bg="#000000",
+    fg="white",
+    bd=0,
+    width=15
+)
+snes_button.pack(pady=5, padx=10)
 
-tk.Button(filter_frame, text="All",
-          command=show_previous_results,
-          bg="#000000", fg="white", bd=0, width=15).pack(pady=5, padx = 10)
+all_button = tk.Button(
+    filter_frame,
+    text="All",
+    command=lambda: apply_filter("All"),
+    bg="#000000",
+    fg="white",
+    bd=0,
+    width=15
+)
+all_button.pack(pady=5, padx=10)
+
+filter_buttons["NES"] = nes_button
+filter_buttons["SEGA"] = sega_button
+filter_buttons["SNES"] = snes_button
+filter_buttons["All"] = all_button
+
+set_filter_button_styles()
 
 # ------------------ RESULTS ------------------
 
