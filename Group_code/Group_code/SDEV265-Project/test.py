@@ -1,3 +1,5 @@
+import json
+import time
 import tkinter as tk
 from tkinter import messagebox
 import customtkinter as ctk
@@ -7,10 +9,13 @@ import sqlite3
 # --- COLORS ---
 BG = "#BCBCBC"
 FG = "black"
-
 # --- API CONFIG ---
-API_KEY = '7a5185043b9c80de440a54ba097dd8a107de762bdd7d7977990b1be306a3e830' #<- change the number between the '' to your API Key
+API_KEY = '1b2b1e65b282ff78c4345dfc6dccc509bd50baeeb7b00abfb7533c23f15a962c' #<- change the number between the '' to your API Key
 BASE_URL = 'https://api.thegamesdb.net/'
+DB_PATH = "gamesdb_cache.db"
+SEARCH_TTL = 60 * 60 * 24
+DETAIL_TTL = 60 * 60 * 24 * 7
+LOOKUP_TTL = 60 * 60 * 24 * 30
 
 # --- GLOBAL STATE ---
 platform_cache = {}
@@ -22,13 +27,161 @@ filter_buttons = {}
 
 # ------------------ DATA ------------------
 
+def get_db_connection():
+    return sqlite3.connect(DB_PATH)
+
+def init_db():
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS search_index (
+            q TEXT PRIMARY KEY,
+            results TEXT NOT NULL,
+            updated_at INTEGER NOT NULL
+        )
+    """)
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS games (
+            id INTEGER PRIMARY KEY,
+            data TEXT NOT NULL,
+            has_details INTEGER NOT NULL DEFAULT 0,
+            updated_at INTEGER NOT NULL
+        )
+    """)
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS platforms (
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            updated_at INTEGER NOT NULL
+        )
+    """)
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS genres (
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            updated_at INTEGER NOT NULL
+        )
+    """)
+
+    cur.execute("PRAGMA table_info(games)")
+    game_columns = {row[1] for row in cur.fetchall()}
+    if "has_details" not in game_columns:
+        cur.execute("ALTER TABLE games ADD COLUMN has_details INTEGER NOT NULL DEFAULT 0")
+
+    conn.commit()
+    conn.close()
+
+def is_fresh(updated_at, ttl):
+    return (int(time.time()) - updated_at) < ttl
+
+def get_cached_search(query):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT results, updated_at FROM search_index WHERE q = ?", (query,))
+    row = cur.fetchone()
+    conn.close()
+
+    if row and is_fresh(row[1], SEARCH_TTL):
+        return json.loads(row[0])
+    return None
+
+def save_search(query, games):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        INSERT OR REPLACE INTO search_index (q, results, updated_at)
+        VALUES (?, ?, ?)
+    """, (query, json.dumps(games), int(time.time())))
+    conn.commit()
+    conn.close()
+
+def get_cached_game(game_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT data, has_details, updated_at FROM games WHERE id = ?", (game_id,))
+    row = cur.fetchone()
+    conn.close()
+
+    if row and is_fresh(row[2], DETAIL_TTL):
+        return json.loads(row[0]), bool(row[1])
+    return None, False
+
+def save_game(game, has_details=False):
+    game_id = game.get("id")
+    if game_id is None:
+        return
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT data, has_details FROM games WHERE id = ?", (game_id,))
+    existing = cur.fetchone()
+
+    if existing and existing[1]:
+        if not has_details:
+            game = json.loads(existing[0])
+        has_details = True
+
+    cur.execute("""
+        INSERT OR REPLACE INTO games (id, data, has_details, updated_at)
+        VALUES (?, ?, ?, ?)
+    """, (
+        game_id,
+        json.dumps(game),
+        1 if has_details else 0,
+        int(time.time())
+    ))
+    conn.commit()
+    conn.close()
+
+def get_cached_lookup(table_name, ttl):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute(f"SELECT id, name, updated_at FROM {table_name}")
+    rows = cur.fetchall()
+    conn.close()
+
+    if not rows:
+        return None
+
+    newest = max(row[2] for row in rows)
+    if not is_fresh(newest, ttl):
+        return None
+
+    return {int(row[0]): row[1] for row in rows}
+
+def save_lookup(table_name, data_dict):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    now = int(time.time())
+
+    for item_id, name in data_dict.items():
+        cur.execute(
+            f"INSERT OR REPLACE INTO {table_name} (id, name, updated_at) VALUES (?, ?, ?)",
+            (int(item_id), name, now)
+        )
+
+    conn.commit()
+    conn.close()
+
 def load_platforms():
     global platform_cache
+
+    cached = get_cached_lookup("platforms", LOOKUP_TTL)
+    if cached:
+        platform_cache = cached
+        return
+
     try:
         resp = requests.get(f"{BASE_URL}v1/Platforms?apikey={API_KEY}")
         data = resp.json()
+        platform_cache = {}
         for pid, pdata in data.get("data", {}).get("platforms", {}).items():
             platform_cache[int(pid)] = pdata.get("name", "Unknown")
+        save_lookup("platforms", platform_cache)
     except Exception as e:
         print("Error loading platforms:", e)
 
@@ -37,11 +190,19 @@ def get_platform_name(platform_id):
 
 def load_genres():
     global genre_cache
+
+    cached = get_cached_lookup("genres", LOOKUP_TTL)
+    if cached:
+        genre_cache = cached
+        return
+
     try:
         resp = requests.get(f"{BASE_URL}v1/Genres?apikey={API_KEY}")
         data = resp.json()
+        genre_cache = {}
         for gid, gdata in data.get("data", {}).get("genres", {}).items():
             genre_cache[int(gid)] = gdata.get("name", "Unknown")
+        save_lookup("genres", genre_cache)
     except Exception as e:
         print("Error loading genres:", e)
 
@@ -71,7 +232,6 @@ def set_filter_button_styles():
             button.config(bg=selected_bg, fg=selected_fg)
         else:
             button.config(bg=normal_bg, fg=normal_fg)
-
 
 def apply_filter(filter_name, platform_keyword=None):
     global active_filter
@@ -176,23 +336,34 @@ def build_result_row(game):
 # ------------------ SEARCH ------------------
 
 def fetch_game_data_by_name():
-    global last_search_results, is_showing_detail
+    global last_search_results, is_showing_detail, active_filter
 
     name = entry_name.get().strip()
     if not name:
         messagebox.showwarning("Input Error", "Enter a game name")
         return
 
+    query = name.lower()
     back_button.pack_forget()
 
     try:
-        url = f"{BASE_URL}v1/Games/ByGameName?apikey={API_KEY}&name={name}"
-        resp = requests.get(url)
-        data = resp.json()
-        games = data.get("data", {}).get("games", [])
+        games = get_cached_search(query)
+
+        if games is None:
+            url = f"{BASE_URL}v1/Games/ByGameName?apikey={API_KEY}&name={name}"
+            resp = requests.get(url)
+            data = resp.json()
+            games = data.get("data", {}).get("games", [])
+
+            save_search(query, games)
+
+            for game in games:
+                save_game(game, has_details=False)
 
         last_search_results = games
         is_showing_detail = False
+        active_filter = None
+        set_filter_button_styles()
 
         for w in results_inner_frame.winfo_children():
             w.destroy()
@@ -219,10 +390,19 @@ def fetch_game_details(game_id):
     back_button.pack(side="left")
 
     try:
-        url = f"{BASE_URL}v1/Games/ByGameID?apikey={API_KEY}&id={game_id}&fields=overview,players,genres,release_date,platform,game_title"
-        resp = requests.get(url)
-        data = resp.json()
-        game = data.get("data", {}).get("games", [])[0]
+        game, has_details = get_cached_game(game_id)
+
+        if not game or not has_details:
+            url = f"{BASE_URL}v1/Games/ByGameID?apikey={API_KEY}&id={game_id}&fields=overview,players,genres,release_date,platform,game_title"
+            resp = requests.get(url)
+            data = resp.json()
+            games = data.get("data", {}).get("games", [])
+
+            if not games:
+                raise ValueError("Game details not found.")
+
+            game = games[0]
+            save_game(game, has_details=True)
 
         fields = [
             ("Name", game.get("game_title")),
@@ -248,9 +428,8 @@ def fetch_game_details(game_id):
 # ------------------ BACK ------------------
 
 def show_previous_results():
-    global is_showing_detail, active_filter
+    global is_showing_detail
     is_showing_detail = False
-    active_filter = "All"
 
     back_button.pack_forget()
 
@@ -260,19 +439,16 @@ def show_previous_results():
     for game in last_search_results:
         build_result_row(game)
 
-    set_filter_button_styles()
-
 # ------------------ CLEAR ------------------
 
 def clear_search():
     global active_filter
-    entry_name.delete(0, tk.END)
-    active_filter = None
 
+    entry_name.delete(0, tk.END)
     for w in results_inner_frame.winfo_children():
         w.destroy()
-
     back_button.pack_forget()
+    active_filter = None
     set_filter_button_styles()
 
 # ------------------ GUI ------------------
@@ -405,8 +581,6 @@ filter_buttons["SEGA"] = sega_button
 filter_buttons["SNES"] = snes_button
 filter_buttons["All"] = all_button
 
-set_filter_button_styles()
-
 # ------------------ RESULTS ------------------
 
 results_container = tk.Frame(main_frame, bg=BG)
@@ -438,6 +612,7 @@ scrollbar.pack(side="right", fill="y")
 
 # ------------------ INIT ------------------
 
+init_db()
 load_platforms()
 load_genres()
 
