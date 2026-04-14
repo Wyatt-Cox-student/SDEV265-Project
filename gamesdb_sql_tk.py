@@ -5,7 +5,8 @@ from tkinter import messagebox
 import customtkinter as ctk
 import requests
 import sqlite3
-
+# added &include=boxart in url path for detail page images.
+# all i need to add is the Pillow stuff
 # --- COLORS ---
 BG = "#BCBCBC"
 FG = "black"
@@ -393,7 +394,7 @@ def fetch_game_details(game_id):
         game, has_details = get_cached_game(game_id)
 
         if not game or not has_details:
-            url = f"{BASE_URL}v1/Games/ByGameID?apikey={API_KEY}&id={game_id}&fields=overview,players,genres,release_date,platform,game_title"
+            url = f"{BASE_URL}v1/Games/ByGameID?apikey={API_KEY}&id={game_id}&fields=overview,players,genres,release_date,platform,game_title&include=boxart"
             resp = requests.get(url)
             data = resp.json()
             games = data.get("data", {}).get("games", [])
