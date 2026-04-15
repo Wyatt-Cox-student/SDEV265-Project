@@ -5,6 +5,8 @@ from tkinter import messagebox
 import customtkinter as ctk
 import requests
 import sqlite3
+from PIL import Image, ImageTk
+
 # added &include=boxart in url path for detail page images.
 # all i need to add is the Pillow stuff
 # --- COLORS ---
