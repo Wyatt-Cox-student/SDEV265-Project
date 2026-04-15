@@ -74,4 +74,6 @@ filters (buttons) on side white text on black background 0 border. (done)
 
 limit 20 per page and have multiple pages you can click through like google?
 
-hover color dark grey for top buttons
+hover color dark grey for top buttons and filter buttons.
+
+
