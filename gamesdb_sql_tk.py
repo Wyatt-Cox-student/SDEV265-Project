@@ -9,11 +9,6 @@ import sqlite3
 from PIL import Image, ImageTk
 from io import BytesIO
 
-
-
-
-# added &include=boxart in url path for detail page images.
-# all i need to add is the Pillow stuff
 # --- COLORS ---
 BG = "#BCBCBC"
 FG = "black"
@@ -848,11 +843,11 @@ results_inner_frame.bind(
 )
 
 
-# create window and keep a reference
+
 inner_window = results_canvas.create_window((0, 0), window=results_inner_frame, anchor="nw")
 
 
-# ensure inner frame always matches canvas width
+
 def _on_canvas_configure(event):
     results_canvas.itemconfig(inner_window, width=event.width)
 
