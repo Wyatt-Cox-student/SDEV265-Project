@@ -1,15 +1,26 @@
 # what systems are called in  thegamesDB to go 
 Atari 2600
+
 Nintendo Entertainment System (NES)
+
 Sega Master System
+
 TurboGrafx 16
+
 Super Nintendo (SNES)
+
 Sega Genesis
+
 Sony Playstation
+
 Nintendo 64
+
 Sega Saturn
+
 Sega Dreamcast
+
 Nintendo GameCube
+
 Sony Playstation 2
 
 for example lets take the NES filter what you would change is you would any existing filter and paste it replace like Nintendo Entertainment System in the copy with the new console name from the list also change the filter button name for example chaneg NES to say N64 then replace Nintendo Entertainment System with Nintendo 64.
