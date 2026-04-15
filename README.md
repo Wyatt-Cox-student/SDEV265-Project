@@ -1,3 +1,21 @@
+# what systems are called in  thegamesDB to go 
+Atari 2600
+Nintendo Entertainment System (NES)
+Sega Master System
+TurboGrafx 16
+Super Nintendo (SNES)
+Sega Genesis
+Sony Playstation
+Nintendo 64
+Sega Saturn
+Sega Dreamcast
+Nintendo GameCube
+Sony Playstation 2
+
+for example lets take the NES filter what you would change is you would any existing filter and paste it replace like Nintendo Entertainment System in the copy with the new console name from the list also change the filter button name for example chaneg NES to say N64 then replace Nintendo Entertainment System with Nintendo 64.
+then at the bottom of the filter section add
+filter_buttons["N64"] = n64_button
+
 # SDEV265-Project
 
 Teresa's Public API Key: 7a5185043b9c80de440a54ba097dd8a107de762bdd7d7977990b1be306a3e830
