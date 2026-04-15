@@ -804,6 +804,16 @@ snes_button = tk.Button(
 )
 snes_button.pack(pady=5, padx=10)
 
+n64_button = tk.Button(
+    filter_frame,
+    text="N64",
+    command=lambda: filter_by_platform("N64", "Nintendo 64"),
+    bg="#000000",
+    fg="white",
+    bd=0,
+    width=15
+)
+n64_button.pack(pady=5, padx=10)
 
 all_button = tk.Button(
     filter_frame,
@@ -820,6 +830,7 @@ all_button.pack(pady=5, padx=10)
 filter_buttons["NES"] = nes_button
 filter_buttons["SEGA"] = sega_button
 filter_buttons["SNES"] = snes_button
+filter_buttons["N64"] = n64_button
 filter_buttons["All"] = all_button
 
 
@@ -871,6 +882,3 @@ load_genres()
 
 
 root.mainloop()
-
-
-
