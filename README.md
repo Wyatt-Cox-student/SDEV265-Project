@@ -1,3 +1,9 @@
+# searches
+Mario (first result clicked)
+
+GoldenEye 007 (first result clicked)
+
+
 # what systems are called in  thegamesDB to go 
 Atari 2600
 
