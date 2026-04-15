@@ -1,4 +1,5 @@
 import json
+import os
 import time
 import tkinter as tk
 from tkinter import messagebox
@@ -6,6 +7,10 @@ import customtkinter as ctk
 import requests
 import sqlite3
 from PIL import Image, ImageTk
+from io import BytesIO
+
+
+
 
 # added &include=boxart in url path for detail page images.
 # all i need to add is the Pillow stuff
@@ -19,6 +24,9 @@ DB_PATH = "gamesdb_cache.db"
 SEARCH_TTL = 60 * 60 * 24
 DETAIL_TTL = 60 * 60 * 24 * 7
 LOOKUP_TTL = 60 * 60 * 24 * 30
+IMAGE_CACHE_DIR = "image_cache"
+current_detail_image = None
+
 
 # --- GLOBAL STATE ---
 platform_cache = {}
@@ -28,14 +36,18 @@ is_showing_detail = False
 active_filter = None
 filter_buttons = {}
 
+
 # ------------------ DATA ------------------
+
 
 def get_db_connection():
     return sqlite3.connect(DB_PATH)
 
+
 def init_db():
     conn = get_db_connection()
     cur = conn.cursor()
+
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS search_index (
@@ -44,6 +56,7 @@ def init_db():
             updated_at INTEGER NOT NULL
         )
     """)
+
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS games (
@@ -54,6 +67,7 @@ def init_db():
         )
     """)
 
+
     cur.execute("""
         CREATE TABLE IF NOT EXISTS platforms (
             id INTEGER PRIMARY KEY,
@@ -61,6 +75,7 @@ def init_db():
             updated_at INTEGER NOT NULL
         )
     """)
+
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS genres (
@@ -70,16 +85,20 @@ def init_db():
         )
     """)
 
+
     cur.execute("PRAGMA table_info(games)")
     game_columns = {row[1] for row in cur.fetchall()}
     if "has_details" not in game_columns:
         cur.execute("ALTER TABLE games ADD COLUMN has_details INTEGER NOT NULL DEFAULT 0")
 
+
     conn.commit()
     conn.close()
 
+
 def is_fresh(updated_at, ttl):
     return (int(time.time()) - updated_at) < ttl
+
 
 def get_cached_search(query):
     conn = get_db_connection()
@@ -88,9 +107,11 @@ def get_cached_search(query):
     row = cur.fetchone()
     conn.close()
 
+
     if row and is_fresh(row[1], SEARCH_TTL):
         return json.loads(row[0])
     return None
+
 
 def save_search(query, games):
     conn = get_db_connection()
@@ -102,6 +123,7 @@ def save_search(query, games):
     conn.commit()
     conn.close()
 
+
 def get_cached_game(game_id):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -109,24 +131,29 @@ def get_cached_game(game_id):
     row = cur.fetchone()
     conn.close()
 
+
     if row and is_fresh(row[2], DETAIL_TTL):
         return json.loads(row[0]), bool(row[1])
     return None, False
+
 
 def save_game(game, has_details=False):
     game_id = game.get("id")
     if game_id is None:
         return
 
+
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("SELECT data, has_details FROM games WHERE id = ?", (game_id,))
     existing = cur.fetchone()
 
+
     if existing and existing[1]:
         if not has_details:
             game = json.loads(existing[0])
         has_details = True
+
 
     cur.execute("""
         INSERT OR REPLACE INTO games (id, data, has_details, updated_at)
@@ -140,6 +167,7 @@ def save_game(game, has_details=False):
     conn.commit()
     conn.close()
 
+
 def get_cached_lookup(table_name, ttl):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -147,19 +175,24 @@ def get_cached_lookup(table_name, ttl):
     rows = cur.fetchall()
     conn.close()
 
+
     if not rows:
         return None
+
 
     newest = max(row[2] for row in rows)
     if not is_fresh(newest, ttl):
         return None
 
+
     return {int(row[0]): row[1] for row in rows}
+
 
 def save_lookup(table_name, data_dict):
     conn = get_db_connection()
     cur = conn.cursor()
     now = int(time.time())
+
 
     for item_id, name in data_dict.items():
         cur.execute(
@@ -167,16 +200,24 @@ def save_lookup(table_name, data_dict):
             (int(item_id), name, now)
         )
 
+
     conn.commit()
     conn.close()
 
+
+def ensure_image_cache_dir():
+    os.makedirs(IMAGE_CACHE_DIR, exist_ok=True)
+
+
 def load_platforms():
     global platform_cache
+
 
     cached = get_cached_lookup("platforms", LOOKUP_TTL)
     if cached:
         platform_cache = cached
         return
+
 
     try:
         resp = requests.get(f"{BASE_URL}v1/Platforms?apikey={API_KEY}")
@@ -188,16 +229,20 @@ def load_platforms():
     except Exception as e:
         print("Error loading platforms:", e)
 
+
 def get_platform_name(platform_id):
     return platform_cache.get(platform_id, "Unknown")
 
+
 def load_genres():
     global genre_cache
+
 
     cached = get_cached_lookup("genres", LOOKUP_TTL)
     if cached:
         genre_cache = cached
         return
+
 
     try:
         resp = requests.get(f"{BASE_URL}v1/Genres?apikey={API_KEY}")
@@ -209,6 +254,7 @@ def load_genres():
     except Exception as e:
         print("Error loading genres:", e)
 
+
 def get_genres_text(raw):
     if not raw:
         return "Unknown"
@@ -216,7 +262,9 @@ def get_genres_text(raw):
         return ", ".join(genre_cache.get(int(g), str(g)) for g in raw)
     return str(raw)
 
+
 # ------------------ FILTER ------------------
+
 
 def find_platform_id_by_name(search_name):
     for pid, name in platform_cache.items():
@@ -224,11 +272,13 @@ def find_platform_id_by_name(search_name):
             return pid
     return None
 
+
 def set_filter_button_styles():
     normal_bg = "#000000"
     normal_fg = "white"
     selected_bg = "#4A4A4A"
     selected_fg = "red"
+
 
     for filter_name, button in filter_buttons.items():
         if filter_name == active_filter:
@@ -236,39 +286,51 @@ def set_filter_button_styles():
         else:
             button.config(bg=normal_bg, fg=normal_fg)
 
+
 def apply_filter(filter_name, platform_keyword=None):
     global active_filter
+
 
     if active_filter == filter_name:
         active_filter = None
 
+
         for w in results_inner_frame.winfo_children():
             w.destroy()
+
 
         for game in last_search_results:
             build_result_row(game)
 
+
         set_filter_button_styles()
         return
+
 
     active_filter = filter_name
     set_filter_button_styles()
 
+
     for w in results_inner_frame.winfo_children():
         w.destroy()
+
 
     if filter_name == "All":
         for game in last_search_results:
             build_result_row(game)
         return
 
+
     pid = find_platform_id_by_name(platform_keyword)
+
 
     if not pid:
         tk.Label(results_inner_frame, text="Platform not found.", bg=BG, fg=FG).pack()
         return
 
+
     filtered = [g for g in last_search_results if g.get("platform") == pid]
+
 
     if filtered:
         for game in filtered:
@@ -276,10 +338,13 @@ def apply_filter(filter_name, platform_keyword=None):
     else:
         tk.Label(results_inner_frame, text="No games match this filter.", bg=BG, fg=FG).pack()
 
+
 def filter_by_platform(filter_name, platform_keyword):
     apply_filter(filter_name, platform_keyword)
 
+
 # ------------------ UI ROW ------------------
+
 
 def build_result_row(game):
     game_id = game.get("id")
@@ -287,11 +352,14 @@ def build_result_row(game):
     release_date = game.get("release_date", "Unknown")
     platform_name = get_platform_name(game.get("platform"))
 
+
     normal_bg = BG
     hover_bg = "#A8A8A8"
 
+
     row = tk.Frame(results_inner_frame, bg=normal_bg, padx=4, pady=6)
     row.pack(fill="x", pady=2)
+
 
     title_lbl = tk.Label(
         row,
@@ -303,6 +371,7 @@ def build_result_row(game):
     )
     title_lbl.pack(fill="x")
 
+
     meta_lbl = tk.Label(
         row,
         text=f"{platform_name} • {release_date}",
@@ -311,46 +380,58 @@ def build_result_row(game):
     )
     meta_lbl.pack(fill="x")
 
+
     def on_click(e=None):
         fetch_game_details(game_id)
+
 
     def on_enter(e=None):
         row.config(bg=hover_bg)
         title_lbl.config(bg=hover_bg)
         meta_lbl.config(bg=hover_bg)
 
+
     def on_leave(e=None):
         row.config(bg=normal_bg)
         title_lbl.config(bg=normal_bg)
         meta_lbl.config(bg=normal_bg)
 
+
     row.bind("<Button-1>", on_click)
     title_lbl.bind("<Button-1>", on_click)
     meta_lbl.bind("<Button-1>", on_click)
+
 
     row.bind("<Enter>", on_enter)
     title_lbl.bind("<Enter>", on_enter)
     meta_lbl.bind("<Enter>", on_enter)
 
+
     row.bind("<Leave>", on_leave)
     title_lbl.bind("<Leave>", on_leave)
     meta_lbl.bind("<Leave>", on_leave)
 
+
 # ------------------ SEARCH ------------------
+
 
 def fetch_game_data_by_name():
     global last_search_results, is_showing_detail, active_filter
+
 
     name = entry_name.get().strip()
     if not name:
         messagebox.showwarning("Input Error", "Enter a game name")
         return
 
+
     query = name.lower()
     back_button.pack_forget()
 
+
     try:
         games = get_cached_search(query)
+
 
         if games is None:
             url = f"{BASE_URL}v1/Games/ByGameName?apikey={API_KEY}&name={name}"
@@ -358,18 +439,23 @@ def fetch_game_data_by_name():
             data = resp.json()
             games = data.get("data", {}).get("games", [])
 
+
             save_search(query, games)
+
 
             for game in games:
                 save_game(game, has_details=False)
+
 
         last_search_results = games
         is_showing_detail = False
         active_filter = None
         set_filter_button_styles()
 
+
         for w in results_inner_frame.winfo_children():
             w.destroy()
+
 
         if games:
             for game in games:
@@ -377,35 +463,145 @@ def fetch_game_data_by_name():
         else:
             tk.Label(results_inner_frame, text="No games found.", bg=BG, fg=FG).pack()
 
+
     except Exception as e:
         messagebox.showerror("Error", str(e))
 
+
+# Box art pull
+def get_boxart_url(api_data, game_id):
+    include = api_data.get("include", {}) or api_data.get("data", {}).get("include", {})
+    boxart = include.get("boxart", {})
+
+
+    base_url = boxart.get("base_url", "")
+    if isinstance(base_url, dict):
+        base_url = base_url.get("original") or base_url.get("small") or ""
+
+
+    art_items = []
+    data_block = boxart.get("data", {})
+
+
+    if isinstance(data_block, dict):
+        art_items = data_block.get(str(game_id), []) or data_block.get(game_id, [])
+    elif isinstance(data_block, list):
+        art_items = data_block
+
+
+    front_art = next((item for item in art_items if item.get("side") == "front"), None)
+    art = front_art or (art_items[0] if art_items else None)
+
+
+    if not art:
+        return None
+
+
+    image_path = art.get("filename") or art.get("url")
+    if not image_path:
+        return None
+
+
+    if image_path.startswith("http"):
+        return image_path
+
+
+    return f"{base_url}{image_path}" if base_url else None
+
+
+
+
+def load_boxart_image(game_id, image_url, max_size=(300, 420)):
+    if not game_id or not image_url:
+        return None
+
+
+    ensure_image_cache_dir()
+    image_path = os.path.join(IMAGE_CACHE_DIR, f"{game_id}.jpg")
+
+
+    if os.path.exists(image_path):
+        pil_image = Image.open(image_path)
+        pil_image.thumbnail(max_size, Image.LANCZOS)
+        return ImageTk.PhotoImage(pil_image)
+
+
+    try:
+        resp = requests.get(image_url, timeout=15)
+        resp.raise_for_status()
+    except requests.HTTPError as e:
+        if e.response is not None and e.response.status_code == 429:
+            return None
+        raise
+
+
+    with open(image_path, "wb") as image_file:
+        image_file.write(resp.content)
+
+
+    pil_image = Image.open(BytesIO(resp.content))
+    pil_image.thumbnail(max_size, Image.LANCZOS)
+    return ImageTk.PhotoImage(pil_image)
+
+
+def has_cached_boxart_image(game_id):
+    if not game_id:
+        return False
+    image_path = os.path.join(IMAGE_CACHE_DIR, f"{game_id}.jpg")
+    return os.path.exists(image_path)
+
+
 # ------------------ DETAILS ------------------
 
+
 def fetch_game_details(game_id):
-    global is_showing_detail
+    global is_showing_detail, current_detail_image
     is_showing_detail = True
+    current_detail_image = None
+
 
     for w in results_inner_frame.winfo_children():
         w.destroy()
 
+
     back_button.pack_forget()
     back_button.pack(side="left")
+
 
     try:
         game, has_details = get_cached_game(game_id)
 
-        if not game or not has_details:
+
+        needs_boxart_lookup = game and has_details and not game.get("boxart_url") and not has_cached_boxart_image(game_id)
+
+
+        if not game or not has_details or needs_boxart_lookup:
             url = f"{BASE_URL}v1/Games/ByGameID?apikey={API_KEY}&id={game_id}&fields=overview,players,genres,release_date,platform,game_title&include=boxart"
-            resp = requests.get(url)
+            resp = requests.get(url, timeout=15)
+            resp.raise_for_status()
             data = resp.json()
             games = data.get("data", {}).get("games", [])
+
 
             if not games:
                 raise ValueError("Game details not found.")
 
+
             game = games[0]
+            game["boxart_url"] = get_boxart_url(data, game_id)
             save_game(game, has_details=True)
+
+
+        current_detail_image = load_boxart_image(game_id, game.get("boxart_url"))
+
+
+        if current_detail_image:
+            tk.Label(
+                results_inner_frame,
+                image=current_detail_image,
+                bg=BG
+            ).grid(row=0, column=0, columnspan=2, pady=(0, 12))
+
 
         fields = [
             ("Name", game.get("game_title")),
@@ -416,36 +612,58 @@ def fetch_game_details(game_id):
             ("Description", game.get("overview") or "No description")
         ]
 
-        for i, (label, value) in enumerate(fields, start=1):
-            tk.Label(results_inner_frame, text=label + ":",
-                     bg=BG, fg=FG,
-                     font=("TkDefaultFont", 10, "bold")).grid(row=i, column=0, sticky="w")
 
-            tk.Label(results_inner_frame, text=value,
-                     bg=BG, fg=FG,
-                     wraplength=500).grid(row=i, column=1, sticky="w")
+        for i, (label, value) in enumerate(fields, start=1):
+            tk.Label(
+                results_inner_frame,
+                text=label + ":",
+                bg=BG,
+                fg=FG,
+                font=("TkDefaultFont", 10, "bold")
+            ).grid(row=i, column=0, sticky="nw", padx=(0, 10), pady=2)
+
+
+            tk.Label(
+                results_inner_frame,
+                text=value,
+                bg=BG,
+                fg=FG,
+                wraplength=500,
+                justify="left"
+            ).grid(row=i, column=1, sticky="w", pady=2)
+
 
     except Exception as e:
         messagebox.showerror("Error", str(e))
 
+
+
+
 # ------------------ BACK ------------------
+
 
 def show_previous_results():
     global is_showing_detail
     is_showing_detail = False
 
+
     back_button.pack_forget()
+
 
     for w in results_inner_frame.winfo_children():
         w.destroy()
 
+
     for game in last_search_results:
         build_result_row(game)
 
+
 # ------------------ CLEAR ------------------
+
 
 def clear_search():
     global active_filter
+
 
     entry_name.delete(0, tk.END)
     for w in results_inner_frame.winfo_children():
@@ -454,22 +672,28 @@ def clear_search():
     active_filter = None
     set_filter_button_styles()
 
+
 # ------------------ GUI ------------------
+
 
 root = tk.Tk()
 root.title("TheGamesDB Browser")
 root.geometry("850x810")
 root.configure(bg=BG)
 
+
 # ================= TOP BAR (FIXED CLEAN SPLIT) =================
+
 
 top_frame = tk.Frame(root, bg=BG)
 top_frame.pack(fill="x", padx=10, pady=5)
+
 
 # BACK BUTTON
 left_bar = tk.Frame(top_frame, bg=BG, width=160)
 left_bar.pack(side="left", fill="y",padx=(25, 3))
 left_bar.pack_propagate(False)
+
 
 back_button = tk.Button(
     left_bar,
@@ -483,56 +707,71 @@ back_button = tk.Button(
 )
 
 
+
+
 # SEARCH AREA
 right_bar = tk.Frame(top_frame, bg=BG)
 right_bar.pack(side="left", fill="x", expand=True)
+
 
 # Search CONTAINER
 search_container = tk.Frame(right_bar, bg=BG)
 search_container.pack(anchor="center")
 
+
 tk.Label(search_container, text="Search:", bg=BG, fg=FG).pack(side="left")
+
 
 entry_name = tk.Entry(search_container, width=30)
 entry_name.pack(side="left", padx=5)
+
 
 # ----------------- BUTTON CONTAINER -----------------
 buttons_container = tk.Frame(search_container, bg=BG)
 buttons_container.pack(side="left", padx=5)
 
+
 buttons_container.grid_columnconfigure(0, minsize=90)
 buttons_container.grid_columnconfigure(1, minsize=90)
 
+
 buttons_container.grid_rowconfigure(0, weight=1, minsize=30)
+
 
 # Search Button
 search_button = ctk.CTkButton(buttons_container, text="Search",
                                command=fetch_game_data_by_name,
-                               bg_color=BG, fg_color=BG, 
+                               bg_color=BG, fg_color=BG,
                                text_color="red", font=("TkDefaultFont", 13, "bold"),  
-                               border_width=2, border_color="black", 
+                               border_width=2, border_color="black",
                                width=100, height=30)
 search_button.grid(row=0, column=0, padx=5, pady=5)
+
 
 # Clear Button
 clear_button = ctk.CTkButton(buttons_container, text="Clear",
                               command=clear_search,
-                              bg_color=BG, fg_color=BG, 
-                              text_color="red", font=("TkDefaultFont", 13, "bold"), 
+                              bg_color=BG, fg_color=BG,
+                              text_color="red", font=("TkDefaultFont", 13, "bold"),
                               border_width=2, border_color="black",  
                               width=100, height=30)  
 clear_button.grid(row=0, column=1, padx=5, pady=5)
 
+
 # ------------------ MAIN ------------------
+
 
 main_frame = tk.Frame(root, bg=BG)
 main_frame.pack(fill="both", expand=True)
 
+
 filter_frame = tk.Frame(main_frame, bg=BG, width=150, bd=1, relief="solid")
 filter_frame.pack(side="left", fill="y", padx = 10, pady =5)
 
+
 tk.Label(filter_frame, text="Filters", bg="#000000", fg="white",
          font=("TkDefaultFont", 12, "bold"), width=15, height = 2).pack(pady=10, padx = 10)
+
 
 # Filter Buttons
 nes_button = tk.Button(
@@ -546,6 +785,7 @@ nes_button = tk.Button(
 )
 nes_button.pack(pady=5, padx=10)
 
+
 sega_button = tk.Button(
     filter_frame,
     text="SEGA",
@@ -556,6 +796,7 @@ sega_button = tk.Button(
     width=15
 )
 sega_button.pack(pady=5, padx=10)
+
 
 snes_button = tk.Button(
     filter_frame,
@@ -568,6 +809,7 @@ snes_button = tk.Button(
 )
 snes_button.pack(pady=5, padx=10)
 
+
 all_button = tk.Button(
     filter_frame,
     text="All",
@@ -579,44 +821,61 @@ all_button = tk.Button(
 )
 all_button.pack(pady=5, padx=10)
 
+
 filter_buttons["NES"] = nes_button
 filter_buttons["SEGA"] = sega_button
 filter_buttons["SNES"] = snes_button
 filter_buttons["All"] = all_button
 
+
 # ------------------ RESULTS ------------------
+
 
 results_container = tk.Frame(main_frame, bg=BG)
 results_container.pack(side="right", fill="both", expand=True)
 
+
 results_canvas = tk.Canvas(results_container, bg=BG, highlightthickness=0)
 scrollbar = tk.Scrollbar(results_container, command=results_canvas.yview)
 
+
 results_inner_frame = tk.Frame(results_canvas, bg=BG)
+
 
 results_inner_frame.bind(
     "<Configure>",
     lambda e: results_canvas.configure(scrollregion=results_canvas.bbox("all"))
 )
 
+
 # create window and keep a reference
 inner_window = results_canvas.create_window((0, 0), window=results_inner_frame, anchor="nw")
+
 
 # ensure inner frame always matches canvas width
 def _on_canvas_configure(event):
     results_canvas.itemconfig(inner_window, width=event.width)
 
+
 results_canvas.bind("<Configure>", _on_canvas_configure)
 
+
 results_canvas.configure(yscrollcommand=scrollbar.set)
+
 
 results_canvas.pack(side="left", fill="both", expand=True)
 scrollbar.pack(side="right", fill="y")
 
+
 # ------------------ INIT ------------------
+
 
 init_db()
 load_platforms()
 load_genres()
 
+
 root.mainloop()
+
+
+
