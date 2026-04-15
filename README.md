@@ -3,6 +3,15 @@ Mario (first result clicked)
 
 GoldenEye 007 (first result clicked)
 
+Sonic (first result clicked)
+
+Sonic 2 (first result clicked)
+
+Final Fantasy (first result clicked)
+
+Final Fantasy X (first result clicked)
+
+Sonic Adventure (first result clicked)
 
 # what systems are called in  thegamesDB to go 
 Atari 2600
