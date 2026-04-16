@@ -47,7 +47,7 @@ filter_buttons["N64"] = n64_button
 Teresa's Public API Key: 7a5185043b9c80de440a54ba097dd8a107de762bdd7d7977990b1be306a3e830
 
 ## to do
-switch filter and filter label to customTkinter
+switch filter and filter label to customTkinter (done)
 
 relocate the back button to the left side of the search entry field (done)
 
