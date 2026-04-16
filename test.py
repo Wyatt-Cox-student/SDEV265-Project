@@ -13,7 +13,8 @@ from io import BytesIO
 BG = "#BCBCBC"
 FG = "black"
 # --- API CONFIG ---
-API_KEY = '1b2b1e65b282ff78c4345dfc6dccc509bd50baeeb7b00abfb7533c23f15a962c' #<- change the number between the '' to your API Key
+# Current API key: Wyatt's
+API_KEY = '6bf1fb5e0d26884e967c677992309e33a2dc22ad3ae6bdd3ff72936565018f41' #<- change the number between the '' to your API Key
 BASE_URL = 'https://api.thegamesdb.net/'
 DB_PATH = "gamesdb_cache.db"
 SEARCH_TTL = 60 * 60 * 24
@@ -262,9 +263,18 @@ def get_genres_text(raw):
 
 
 def find_platform_id_by_name(search_name):
+    search_lower = search_name.lower().strip()
+
+    # try exact match first
     for pid, name in platform_cache.items():
-        if search_name.lower() in name.lower():
+        if name.lower().strip() == search_lower:
             return pid
+
+    # If there is no exact match, fall back to partial match
+    for pid, name in platform_cache.items():
+        if search_lower in name.lower():
+            return pid
+
     return None
 
 

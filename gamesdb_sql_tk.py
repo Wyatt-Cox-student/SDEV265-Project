@@ -13,7 +13,8 @@ from io import BytesIO
 BG = "#BCBCBC"
 FG = "black"
 # --- API CONFIG ---
-API_KEY = '1b2b1e65b282ff78c4345dfc6dccc509bd50baeeb7b00abfb7533c23f15a962c' #<- change the number between the '' to your API Key
+# Current API key: Wyatt's
+API_KEY = '6bf1fb5e0d26884e967c677992309e33a2dc22ad3ae6bdd3ff72936565018f41' #<- change the number between the '' to your API Key
 BASE_URL = 'https://api.thegamesdb.net/'
 DB_PATH = "gamesdb_cache.db"
 SEARCH_TTL = 60 * 60 * 24
@@ -262,9 +263,18 @@ def get_genres_text(raw):
 
 
 def find_platform_id_by_name(search_name):
+    search_lower = search_name.lower().strip()
+
+    # try exact match first
     for pid, name in platform_cache.items():
-        if search_name.lower() in name.lower():
+        if name.lower().strip() == search_lower:
             return pid
+
+    # If there is no exact match, fall back to partial match
+    for pid, name in platform_cache.items():
+        if search_lower in name.lower():
+            return pid
+
     return None
 
 
@@ -277,15 +287,9 @@ def set_filter_button_styles():
 
     for filter_name, button in filter_buttons.items():
         if filter_name == active_filter:
-            button.configure(
-                fg_color=selected_bg,
-                text_color=selected_fg
-            )
+            button.config(bg=selected_bg, fg=selected_fg)
         else:
-            button.configure(
-                fg_color=normal_bg,
-                text_color=normal_fg
-            )
+            button.config(bg=normal_bg, fg=normal_fg)
 
 
 def apply_filter(filter_name, platform_keyword=None):
@@ -770,72 +774,66 @@ filter_frame = tk.Frame(main_frame, bg=BG, width=150, bd=1, relief="solid")
 filter_frame.pack(side="left", fill="y", padx = 10, pady =5)
 
 
-ctk.CTkLabel(filter_frame, text="Filters", bg_color ="#000000", text_color ="white",
-         font=("TkDefaultFont", 15, "bold"), width=180, height = 40).pack(pady=10, padx = 10)
-
+tk.Label(filter_frame, text="Filters", bg="#000000", fg="white",
+         font=("TkDefaultFont", 12, "bold"), width=15, height = 2).pack(pady=10, padx = 10)
 
 
 # Filter Buttons
-nes_button = ctk.CTkButton(
-    filter_frame, 
+nes_button = tk.Button(
+    filter_frame,
     text="NES",
     command=lambda: filter_by_platform("NES", "Nintendo Entertainment System"),
-    bg_color= "#000000",
-    fg_color= "#000000",
-    text_color= "white", font=("TkDefaultFont", 15, "bold"),
-    width=180, 
-    height=40
-) 
-
+    bg="#000000",
+    fg="white",
+    bd=0,
+    width=15
+)
 nes_button.pack(pady=5, padx=10)
 
 
-sega_button= ctk.CTkButton(
-    filter_frame, 
+sega_button = tk.Button(
+    filter_frame,
     text="SEGA",
     command=lambda: filter_by_platform("SEGA", "Genesis"),
-    bg_color= "#000000",
-    fg_color= "#000000",
-    text_color= "white", font=("TkDefaultFont", 15, "bold"),
-    width=180, 
-    height=40
-) 
+    bg="#000000",
+    fg="white",
+    bd=0,
+    width=15
+)
 sega_button.pack(pady=5, padx=10)
 
-snes_button= ctk.CTkButton(
-    filter_frame, 
+
+snes_button = tk.Button(
+    filter_frame,
     text="SNES",
     command=lambda: filter_by_platform("SNES", "Super Nintendo"),
-    bg_color= "#000000",
-    fg_color= "#000000",
-    text_color= "white", font=("TkDefaultFont", 15, "bold"),
-    width=180, 
-    height=40
-) 
+    bg="#000000",
+    fg="white",
+    bd=0,
+    width=15
+)
 snes_button.pack(pady=5, padx=10)
 
-n64_button= ctk.CTkButton(
-    filter_frame, 
+n64_button = tk.Button(
+    filter_frame,
     text="N64",
     command=lambda: filter_by_platform("N64", "Nintendo 64"),
-    bg_color= "#000000",
-    fg_color= "#000000",
-    text_color= "white", font=("TkDefaultFont", 15, "bold"),
-    width=180, 
-    height=40
-) 
+    bg="#000000",
+    fg="white",
+    bd=0,
+    width=15
+)
 n64_button.pack(pady=5, padx=10)
 
-all_button= ctk.CTkButton(
-    filter_frame, 
+all_button = tk.Button(
+    filter_frame,
     text="All",
     command=lambda: apply_filter("All"),
-    bg_color= "#000000",
-    fg_color= "#000000",
-    text_color= "white", font=("TkDefaultFont", 15, "bold"),
-    width=180, 
-    height=40
-) 
+    bg="#000000",
+    fg="white",
+    bd=0,
+    width=15
+)
 all_button.pack(pady=5, padx=10)
 
 
@@ -894,5 +892,3 @@ load_genres()
 
 
 root.mainloop()
-
-
