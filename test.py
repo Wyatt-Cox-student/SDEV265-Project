@@ -284,13 +284,17 @@ def set_filter_button_styles():
     selected_bg = "#4A4A4A"
     selected_fg = "red"
 
-
     for filter_name, button in filter_buttons.items():
         if filter_name == active_filter:
-            button.config(bg=selected_bg, fg=selected_fg)
+            button.configure(
+                fg_color=selected_bg,
+                text_color=selected_fg
+            )
         else:
-            button.config(bg=normal_bg, fg=normal_fg)
-
+            button.configure(
+                fg_color=normal_bg,
+                text_color=normal_fg
+            )
 
 def apply_filter(filter_name, platform_keyword=None):
     global active_filter
@@ -746,7 +750,7 @@ buttons_container.grid_rowconfigure(0, weight=1, minsize=30)
 # Search Button
 search_button = ctk.CTkButton(buttons_container, text="Search",
                                command=fetch_game_data_by_name,
-                               bg_color=BG, fg_color=BG,
+                               bg_color=BG, fg_color=BG, hover_color="#585858",
                                text_color="red", font=("TkDefaultFont", 13, "bold"),  
                                border_width=2, border_color="black",
                                width=100, height=30)
@@ -756,7 +760,7 @@ search_button.grid(row=0, column=0, padx=5, pady=5)
 # Clear Button
 clear_button = ctk.CTkButton(buttons_container, text="Clear",
                               command=clear_search,
-                              bg_color=BG, fg_color=BG,
+                              bg_color=BG, fg_color=BG, hover_color="#585858",
                               text_color="red", font=("TkDefaultFont", 13, "bold"),
                               border_width=2, border_color="black",  
                               width=100, height=30)  
@@ -774,66 +778,80 @@ filter_frame = tk.Frame(main_frame, bg=BG, width=150, bd=1, relief="solid")
 filter_frame.pack(side="left", fill="y", padx = 10, pady =5)
 
 
-tk.Label(filter_frame, text="Filters", bg="#000000", fg="white",
-         font=("TkDefaultFont", 12, "bold"), width=15, height = 2).pack(pady=10, padx = 10)
+ctk.CTkLabel(filter_frame, text="Filters", bg_color="#000000", fg_color="#000000", text_color= "white", 
+         font=("TkDefaultFont", 15, "bold"), width=180, height = 40).pack(pady=10, padx = 10)
 
 
 # Filter Buttons
-nes_button = tk.Button(
-    filter_frame,
+nes_button = ctk.CTkButton(
+    filter_frame, 
     text="NES",
     command=lambda: filter_by_platform("NES", "Nintendo Entertainment System"),
-    bg="#000000",
-    fg="white",
-    bd=0,
-    width=15
-)
+    bg_color= "#000000",
+    fg_color= "#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color= "white", font=("TkDefaultFont", 15, "bold"),
+    width=180, 
+    height=40
+) 
+
 nes_button.pack(pady=5, padx=10)
 
-
-sega_button = tk.Button(
-    filter_frame,
+sega_button= ctk.CTkButton(
+    filter_frame, 
     text="SEGA",
     command=lambda: filter_by_platform("SEGA", "Genesis"),
-    bg="#000000",
-    fg="white",
-    bd=0,
-    width=15
-)
+    bg_color= "#000000",
+    fg_color= "#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color= "white", font=("TkDefaultFont", 15, "bold"),
+    width=180, 
+    height=40
+) 
 sega_button.pack(pady=5, padx=10)
 
-
-snes_button = tk.Button(
-    filter_frame,
+snes_button= ctk.CTkButton(
+    filter_frame, 
     text="SNES",
     command=lambda: filter_by_platform("SNES", "Super Nintendo"),
-    bg="#000000",
-    fg="white",
-    bd=0,
-    width=15
-)
+    bg_color= "#000000",
+    fg_color= "#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color= "white", font=("TkDefaultFont", 15, "bold"),
+    width=180, 
+    height=40
+) 
 snes_button.pack(pady=5, padx=10)
 
-n64_button = tk.Button(
-    filter_frame,
+n64_button= ctk.CTkButton(
+    filter_frame, 
     text="N64",
     command=lambda: filter_by_platform("N64", "Nintendo 64"),
-    bg="#000000",
-    fg="white",
-    bd=0,
-    width=15
-)
+    bg_color= "#000000",
+    fg_color= "#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color= "white", font=("TkDefaultFont", 15, "bold"),
+    width=180, 
+    height=40
+) 
 n64_button.pack(pady=5, padx=10)
 
-all_button = tk.Button(
-    filter_frame,
+all_button= ctk.CTkButton(
+    filter_frame, 
     text="All",
     command=lambda: apply_filter("All"),
-    bg="#000000",
-    fg="white",
-    bd=0,
-    width=15
-)
+    bg_color= "#000000",
+    fg_color= "#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color= "white", font=("TkDefaultFont", 15, "bold"),
+    width=180, 
+    height=40
+) 
 all_button.pack(pady=5, padx=10)
 
 
