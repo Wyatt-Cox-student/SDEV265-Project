@@ -16,27 +16,27 @@ Sonic Adventure (first result clicked)
 # what systems are called in  thegamesDB to go 
 Atari 2600
 
-Nintendo Entertainment System (NES)
+Nintendo Entertainment System (NES) (Done) (games cached for)
 
 Sega Master System
 
 TurboGrafx 16
 
-Super Nintendo (SNES)
+Super Nintendo (SNES) (Done) (games cached for)
 
-Sega Genesis
+Sega Genesis (Done) (games cached for)
 
-Sony Playstation
+Sony Playstation (games cached for)
 
-Nintendo 64
+Nintendo 64 (Done) (games cached for)
 
 Sega Saturn
 
-Sega Dreamcast
+Sega Dreamcast (games cached for)
 
 Nintendo GameCube
 
-Sony Playstation 2
+Sony Playstation 2 (games cached for)
 
 for example lets take the NES filter what you would change is you would any existing filter and paste it replace like Nintendo Entertainment System in the copy with the new console name from the list also change the filter button name for example chaneg NES to say N64 then replace Nintendo Entertainment System with Nintendo 64.
 then at the bottom of the filter section add
