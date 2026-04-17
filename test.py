@@ -281,21 +281,26 @@ def find_platform_id_by_name(search_name):
 
 
 def set_filter_button_styles():
-    normal_bg = "#000000"
-    normal_fg = "white"
-    selected_bg = "#4A4A4A"
-    selected_fg = "red"
+    normal_fg = "#000000"
+    normal_text = "white"
+    normal_hover = "#585858"
+
+    selected_fg = "#8B0000"
+    selected_text = "white"
+    selected_hover = "#A00000"
 
     for filter_name, button in filter_buttons.items():
         if filter_name == active_filter:
             button.configure(
-                fg_color=selected_bg,
-                text_color=selected_fg
+                fg_color=selected_fg,
+                text_color=selected_text,
+                hover_color=selected_hover
             )
         else:
             button.configure(
-                fg_color=normal_bg,
-                text_color=normal_fg
+                fg_color=normal_fg,
+                text_color=normal_text,
+                hover_color=normal_hover
             )
 
 def apply_filter(filter_name, platform_keyword=None):
@@ -672,8 +677,14 @@ def rebuild_results_only():
             filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Nintendo 64")]
         elif active_filter == "PS":
             filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Sony Playstation")]
-        elif active_filter == "ps3":
+        elif active_filter == "PS2":
+            filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Sony Playstation 2")]
+        elif active_filter == "PS3":
             filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Sony Playstation 3")]
+        elif active_filter == "PS4":
+            filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Sony Playstation 4")]
+        elif active_filter == "PS5":
+            filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Sony Playstation 5")]
         else:
             filtered = last_search_results
 
@@ -862,7 +873,7 @@ n64_button.pack(pady=5, padx=10)
 ps_button= ctk.CTkButton(
     filter_frame, 
     text="PS",
-    command=lambda: filter_by_platform("Ps", "Sony Playstation"),
+    command=lambda: filter_by_platform("PS", "Sony Playstation"),
     bg_color= "#000000",
     fg_color= "#000000",
     hover_color="#585858",
@@ -873,10 +884,24 @@ ps_button= ctk.CTkButton(
 ) 
 ps_button.pack(pady=5, padx=10)
 
+ps2_button= ctk.CTkButton(
+    filter_frame, 
+    text="PS2",
+    command=lambda: filter_by_platform("PS2", "Sony Playstation 2"),
+    bg_color= "#000000",
+    fg_color= "#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color= "white", font=("TkDefaultFont", 15, "bold"),
+    width=180, 
+    height=40
+) 
+ps2_button.pack(pady=5, padx=10)
+
 ps3_button= ctk.CTkButton(
     filter_frame, 
     text="PS3",
-    command=lambda: filter_by_platform("Ps3", "Sony Playstation 3"),
+    command=lambda: filter_by_platform("PS3", "Sony Playstation 3"),
     bg_color= "#000000",
     fg_color= "#000000",
     hover_color="#585858",
@@ -886,6 +911,34 @@ ps3_button= ctk.CTkButton(
     height=40
 ) 
 ps3_button.pack(pady=5, padx=10)
+
+ps4_button= ctk.CTkButton(
+    filter_frame, 
+    text="PS4",
+    command=lambda: filter_by_platform("PS4", "Sony Playstation 4"),
+    bg_color= "#000000",
+    fg_color= "#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color= "white", font=("TkDefaultFont", 15, "bold"),
+    width=180, 
+    height=40
+) 
+ps4_button.pack(pady=5, padx=10)
+
+ps5_button= ctk.CTkButton(
+    filter_frame, 
+    text="PS5",
+    command=lambda: filter_by_platform("PS5", "Sony Playstation 5"),
+    bg_color= "#000000",
+    fg_color= "#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color= "white", font=("TkDefaultFont", 15, "bold"),
+    width=180, 
+    height=40
+) 
+ps5_button.pack(pady=5, padx=10)
 
 all_button= ctk.CTkButton(
     filter_frame, 
@@ -907,10 +960,13 @@ filter_buttons["SEGA"] = sega_button
 filter_buttons["SNES"] = snes_button
 filter_buttons["N64"] = n64_button
 filter_buttons["PS"] = ps_button
+filter_buttons["PS2"] = ps2_button
 filter_buttons["PS3"] = ps3_button
+filter_buttons["PS4"] = ps4_button
+filter_buttons["PS5"] = ps5_button
 filter_buttons["All"] = all_button
 
-
+set_filter_button_styles()
 # ------------------ RESULTS ------------------
 
 
