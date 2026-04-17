@@ -652,23 +652,36 @@ def fetch_game_details(game_id):
 
 # ------------------ BACK ------------------
 
-
-def show_previous_results():
-    global is_showing_detail
-    is_showing_detail = False
-
-
-    back_button.pack_forget()
-
-
+def rebuild_results_only():
     for w in results_inner_frame.winfo_children():
         w.destroy()
 
+    if active_filter == "All" or active_filter is None:
+        for game in last_search_results:
+            build_result_row(game)
+    else:
+        # filter names for back button to reffer to 
+        # add to when other filters get added
+        if active_filter == "NES":
+            filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Nintendo Entertainment System")]
+        elif active_filter == "SEGA":
+            filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Genesis")]
+        elif active_filter == "SNES":
+            filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Super Nintendo")]
+        elif active_filter == "N64":
+            filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Nintendo 64")]
+        else:
+            filtered = last_search_results
 
-    for game in last_search_results:
-        build_result_row(game)
+        for game in filtered:
+            build_result_row(game)
+def show_previous_results():
+    global is_showing_detail
 
+    is_showing_detail = False
+    back_button.pack_forget()
 
+    rebuild_results_only()
 # ------------------ CLEAR ------------------
 
 
