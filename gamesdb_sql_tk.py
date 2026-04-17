@@ -17,9 +17,11 @@ FG = "black"
 API_KEY = '6bf1fb5e0d26884e967c677992309e33a2dc22ad3ae6bdd3ff72936565018f41' #<- change the number between the '' to your API Key
 BASE_URL = 'https://api.thegamesdb.net/'
 DB_PATH = "gamesdb_cache.db"
-SEARCH_TTL = 60 * 60 * 24
-DETAIL_TTL = 60 * 60 * 24 * 7
-LOOKUP_TTL = 60 * 60 * 24 * 30
+THIRTY_DAYS = 60 * 60 * 24 * 30
+
+SEARCH_TTL = THIRTY_DAYS
+DETAIL_TTL = THIRTY_DAYS
+LOOKUP_TTL = THIRTY_DAYS
 IMAGE_CACHE_DIR = "image_cache"
 current_detail_image = None
 
