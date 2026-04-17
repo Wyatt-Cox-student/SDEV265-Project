@@ -25,7 +25,7 @@ TurboGrafx 16
 Super Nintendo (SNES) (Done) (games cached for)
 
 Sega Genesis (Done) (games cached for)
-    # Addons
+     # Addons
     Sega CD
     32X
 
