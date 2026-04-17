@@ -13,13 +13,15 @@ from io import BytesIO
 BG = "#BCBCBC"
 FG = "black"
 # --- API CONFIG ---
-# Current API key: Wyatt's
-API_KEY = '6bf1fb5e0d26884e967c677992309e33a2dc22ad3ae6bdd3ff72936565018f41' #<- change the number between the '' to your API Key
+# Current API key: Teresa's
+API_KEY = '1b2b1e65b282ff78c4345dfc6dccc509bd50baeeb7b00abfb7533c23f15a962c' #<- change the number between the '' to your API Key
 BASE_URL = 'https://api.thegamesdb.net/'
 DB_PATH = "gamesdb_cache.db"
-SEARCH_TTL = 60 * 60 * 24
-DETAIL_TTL = 60 * 60 * 24 * 7
-LOOKUP_TTL = 60 * 60 * 24 * 30
+THIRTY_DAYS = 60 * 60 * 24 * 30
+
+SEARCH_TTL = THIRTY_DAYS
+DETAIL_TTL = THIRTY_DAYS
+LOOKUP_TTL = THIRTY_DAYS
 IMAGE_CACHE_DIR = "image_cache"
 current_detail_image = None
 
@@ -650,23 +652,36 @@ def fetch_game_details(game_id):
 
 # ------------------ BACK ------------------
 
-
-def show_previous_results():
-    global is_showing_detail
-    is_showing_detail = False
-
-
-    back_button.pack_forget()
-
-
+def rebuild_results_only():
     for w in results_inner_frame.winfo_children():
         w.destroy()
 
+    if active_filter == "All" or active_filter is None:
+        for game in last_search_results:
+            build_result_row(game)
+    else:
+        # filter names for back button to reffer to 
+        # add to when other filters get added
+        if active_filter == "NES":
+            filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Nintendo Entertainment System")]
+        elif active_filter == "SEGA":
+            filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Genesis")]
+        elif active_filter == "SNES":
+            filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Super Nintendo")]
+        elif active_filter == "N64":
+            filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Nintendo 64")]
+        else:
+            filtered = last_search_results
 
-    for game in last_search_results:
-        build_result_row(game)
+        for game in filtered:
+            build_result_row(game)
+def show_previous_results():
+    global is_showing_detail
 
+    is_showing_detail = False
+    back_button.pack_forget()
 
+    rebuild_results_only()
 # ------------------ CLEAR ------------------
 
 
