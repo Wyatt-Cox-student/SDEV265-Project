@@ -1,4 +1,3 @@
-hack
 # searches
 Mario (first result clicked for search, NES, and SNES)
 
