@@ -20,11 +20,14 @@ Nintendo Entertainment System (NES) (Done) (games cached for)
 
 Sega Master System
 
-TurboGrafx 16
+TurboGrafx 16 
 
 Super Nintendo (SNES) (Done) (games cached for)
 
 Sega Genesis (Done) (games cached for)
+# Addons
+    Sega CD
+    32X
 
 Sony Playstation (games cached for)
 
