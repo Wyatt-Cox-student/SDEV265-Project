@@ -30,7 +30,7 @@ Sega Genesis (Done) (games cached for)
      
     Sega CD
     
-    32X
+    Sega 32X
 
 Sony Playstation (games cached for)
 
