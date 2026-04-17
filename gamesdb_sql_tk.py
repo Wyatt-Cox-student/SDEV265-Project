@@ -13,8 +13,8 @@ from io import BytesIO
 BG = "#BCBCBC"
 FG = "black"
 # --- API CONFIG ---
-# Current API key: Wyatt's
-API_KEY = '6bf1fb5e0d26884e967c677992309e33a2dc22ad3ae6bdd3ff72936565018f41' #<- change the number between the '' to your API Key
+# Current API key: Teresa's
+API_KEY = '1b2b1e65b282ff78c4345dfc6dccc509bd50baeeb7b00abfb7533c23f15a962c' #<- change the number between the '' to your API Key
 BASE_URL = 'https://api.thegamesdb.net/'
 DB_PATH = "gamesdb_cache.db"
 THIRTY_DAYS = 60 * 60 * 24 * 30

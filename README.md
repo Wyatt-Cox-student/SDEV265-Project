@@ -1,11 +1,11 @@
 # searches
-Mario (first result clicked)
+Mario (first result clicked for search, NES, and SNES)
 
-GoldenEye 007 (first result clicked)
+GoldenEye 007 (first result clicked for search and N64)
 
-Sonic (first result clicked)
+Sonic (first result clicked for search and SEGA)
 
-Sonic 2 (first result clicked)
+Sonic 2 (first result clicked search and SEGA)
 
 Final Fantasy (first result clicked)
 
