@@ -13,8 +13,8 @@ from io import BytesIO
 BG = "#BCBCBC"
 FG = "black"
 # --- API CONFIG ---
-# Current API key: Teresa's
-API_KEY = '1b2b1e65b282ff78c4345dfc6dccc509bd50baeeb7b00abfb7533c23f15a962c' #<- change the number between the '' to your API Key
+# Current API key: Wyatts's
+API_KEY = '6bf1fb5e0d26884e967c677992309e33a2dc22ad3ae6bdd3ff72936565018f41' #<- change the number between the '' to your API Key
 BASE_URL = 'https://api.thegamesdb.net/'
 DB_PATH = "gamesdb_cache.db"
 THIRTY_DAYS = 60 * 60 * 24 * 30
@@ -670,6 +670,10 @@ def rebuild_results_only():
             filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Super Nintendo")]
         elif active_filter == "N64":
             filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Nintendo 64")]
+        elif active_filter == "PS":
+            filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Sony Playstation")]
+        elif active_filter == "ps3":
+            filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Sony Playstation 3")]
         else:
             filtered = last_search_results
 
@@ -855,6 +859,34 @@ n64_button= ctk.CTkButton(
 ) 
 n64_button.pack(pady=5, padx=10)
 
+ps_button= ctk.CTkButton(
+    filter_frame, 
+    text="PS",
+    command=lambda: filter_by_platform("Ps", "Sony Playstation"),
+    bg_color= "#000000",
+    fg_color= "#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color= "white", font=("TkDefaultFont", 15, "bold"),
+    width=180, 
+    height=40
+) 
+ps_button.pack(pady=5, padx=10)
+
+ps3_button= ctk.CTkButton(
+    filter_frame, 
+    text="PS3",
+    command=lambda: filter_by_platform("Ps3", "Sony Playstation 3"),
+    bg_color= "#000000",
+    fg_color= "#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color= "white", font=("TkDefaultFont", 15, "bold"),
+    width=180, 
+    height=40
+) 
+ps3_button.pack(pady=5, padx=10)
+
 all_button= ctk.CTkButton(
     filter_frame, 
     text="All",
@@ -874,6 +906,8 @@ filter_buttons["NES"] = nes_button
 filter_buttons["SEGA"] = sega_button
 filter_buttons["SNES"] = snes_button
 filter_buttons["N64"] = n64_button
+filter_buttons["PS"] = ps_button
+filter_buttons["PS3"] = ps3_button
 filter_buttons["All"] = all_button
 
 
