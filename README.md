@@ -1,4 +1,4 @@
-hack, call of duty modern, and a plague 
+hack
 # searches
 Mario (first result clicked for search, NES, and SNES)
 
@@ -14,6 +14,9 @@ Final Fantasy X (first result clicked)
 
 Sonic Adventure (first result clicked)
 
+call of duty modern (added by Wyatt)
+
+A Plague Tale (added by Wyatt)
 # what systems are called in  thegamesDB to go 
 Atari 2600
 
