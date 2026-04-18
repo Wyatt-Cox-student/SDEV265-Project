@@ -281,21 +281,26 @@ def find_platform_id_by_name(search_name):
 
 
 def set_filter_button_styles():
-    normal_bg = "#000000"
-    normal_fg = "white"
-    selected_bg = "#4A4A4A"
-    selected_fg = "red"
+    normal_fg = "#000000"
+    normal_text = "white"
+    normal_hover = "#585858"
+
+    selected_fg = "#8B0000"
+    selected_text = "white"
+    selected_hover = "#A00000"
 
     for filter_name, button in filter_buttons.items():
         if filter_name == active_filter:
             button.configure(
-                fg_color=selected_bg,
-                text_color=selected_fg
+                fg_color=selected_fg,
+                text_color=selected_text,
+                hover_color=selected_hover
             )
         else:
             button.configure(
-                fg_color=normal_bg,
-                text_color=normal_fg
+                fg_color=normal_fg,
+                text_color=normal_text,
+                hover_color=normal_hover
             )
 
 def apply_filter(filter_name, platform_keyword=None):
@@ -664,12 +669,22 @@ def rebuild_results_only():
         # add to when other filters get added
         if active_filter == "NES":
             filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Nintendo Entertainment System")]
-        elif active_filter == "SEGA":
+        elif active_filter == "SEGA GEN.":
             filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Genesis")]
         elif active_filter == "SNES":
             filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Super Nintendo")]
         elif active_filter == "N64":
             filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Nintendo 64")]
+        elif active_filter == "PS":
+            filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Sony Playstation")]
+        elif active_filter == "PS2":
+            filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Sony Playstation 2")]
+        elif active_filter == "Dreamcast":
+            filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Sega Dreamcast")]
+        elif active_filter == "Saturn":
+            filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Sega Saturn")]
+        elif active_filter == "GameCube":
+            filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Nintendo GameCube")]
         else:
             filtered = last_search_results
 
@@ -813,20 +828,6 @@ nes_button = ctk.CTkButton(
 
 nes_button.pack(pady=5, padx=10)
 
-sega_button= ctk.CTkButton(
-    filter_frame, 
-    text="SEGA",
-    command=lambda: filter_by_platform("SEGA", "Genesis"),
-    bg_color= "#000000",
-    fg_color= "#000000",
-    hover_color="#585858",
-    corner_radius=0,
-    text_color= "white", font=("TkDefaultFont", 15, "bold"),
-    width=180, 
-    height=40
-) 
-sega_button.pack(pady=5, padx=10)
-
 snes_button= ctk.CTkButton(
     filter_frame, 
     text="SNES",
@@ -840,6 +841,34 @@ snes_button= ctk.CTkButton(
     height=40
 ) 
 snes_button.pack(pady=5, padx=10)
+
+sega_button= ctk.CTkButton(
+    filter_frame, 
+    text="SEGA GEN.",
+    command=lambda: filter_by_platform("SEGA GEN.", "Genesis"),
+    bg_color= "#000000",
+    fg_color= "#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color= "white", font=("TkDefaultFont", 15, "bold"),
+    width=180, 
+    height=40
+) 
+sega_button.pack(pady=5, padx=10)
+
+ps_button= ctk.CTkButton(
+    filter_frame, 
+    text="PS",
+    command=lambda: filter_by_platform("PS", "Sony Playstation"),
+    bg_color= "#000000",
+    fg_color= "#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color= "white", font=("TkDefaultFont", 15, "bold"),
+    width=180, 
+    height=40
+) 
+ps_button.pack(pady=5, padx=10)
 
 n64_button= ctk.CTkButton(
     filter_frame, 
@@ -855,6 +884,62 @@ n64_button= ctk.CTkButton(
 ) 
 n64_button.pack(pady=5, padx=10)
 
+Saturn_button= ctk.CTkButton(
+    filter_frame, 
+    text="Saturn",
+    command=lambda: filter_by_platform("Saturn", "Sega Saturn"),
+    bg_color= "#000000",
+    fg_color= "#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color= "white", font=("TkDefaultFont", 15, "bold"),
+    width=180, 
+    height=40
+) 
+Saturn_button.pack(pady=5, padx=10)
+
+Dreamcast_button= ctk.CTkButton(
+    filter_frame, 
+    text="Dreamcast",
+    command=lambda: filter_by_platform("Dreamcast", "Sega Dreamcast"),
+    bg_color= "#000000",
+    fg_color= "#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color= "white", font=("TkDefaultFont", 15, "bold"),
+    width=180, 
+    height=40
+) 
+Dreamcast_button.pack(pady=5, padx=10)
+
+GameCube_button= ctk.CTkButton(
+    filter_frame, 
+    text="GameCube",
+    command=lambda: filter_by_platform("GameCube", "Nintendo GameCube"),
+    bg_color= "#000000",
+    fg_color= "#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color= "white", font=("TkDefaultFont", 15, "bold"),
+    width=180, 
+    height=40
+) 
+GameCube_button.pack(pady=5, padx=10)
+
+ps2_button= ctk.CTkButton(
+    filter_frame, 
+    text="PS2",
+    command=lambda: filter_by_platform("PS2", "Sony Playstation 2"),
+    bg_color= "#000000",
+    fg_color= "#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color= "white", font=("TkDefaultFont", 15, "bold"),
+    width=180, 
+    height=40
+) 
+ps2_button.pack(pady=5, padx=10)
+
 all_button= ctk.CTkButton(
     filter_frame, 
     text="All",
@@ -869,14 +954,18 @@ all_button= ctk.CTkButton(
 ) 
 all_button.pack(pady=5, padx=10)
 
-
 filter_buttons["NES"] = nes_button
-filter_buttons["SEGA"] = sega_button
+filter_buttons["SEGA GEN."] = sega_button
 filter_buttons["SNES"] = snes_button
 filter_buttons["N64"] = n64_button
+filter_buttons["PS"] = ps_button
+filter_buttons["PS2"] = ps2_button
+filter_buttons["Dreamcast"] = Dreamcast_button
+filter_buttons["Saturn"] = Saturn_button
+filter_buttons["GameCube"] = GameCube_button
 filter_buttons["All"] = all_button
 
-
+set_filter_button_styles()
 # ------------------ RESULTS ------------------
 
 
