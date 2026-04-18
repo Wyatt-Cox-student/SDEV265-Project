@@ -46,7 +46,7 @@ Sega Saturn(Done)
 
 Sega Dreamcast (games cached for)(done)
 
-Nintendo GameCube
+Nintendo GameCube(done)
 
 Sony Playstation 2 (games cached for) (done)
 
