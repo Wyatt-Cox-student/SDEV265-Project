@@ -11,7 +11,7 @@ Final Fantasy (first result clicked)
 
 Final Fantasy X (first result clicked)
 
-Sonic Adventure (first result clicked)
+Sonic Adventure (first result clicked for GameCube and Dreamcast)
 
 call of duty modern (added by Wyatt)
 
@@ -46,7 +46,7 @@ Sega Saturn(Done)
 
 Sega Dreamcast (games cached for)(done)
 
-Nintendo GameCube(done)
+Nintendo GameCube(done) (games cached for)
 
 Sony Playstation 2 (games cached for) (done)
 
