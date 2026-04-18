@@ -24,7 +24,7 @@ Atari 2600
 
 Nintendo Entertainment System (NES) (Done) (games cached for)
 
-Sega Master System
+Sega Master System (Abbreviation Sega MS)
 
 TurboGrafx 16 
 
