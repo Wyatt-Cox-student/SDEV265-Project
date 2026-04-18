@@ -716,7 +716,7 @@ def clear_search():
 
 
 root = tk.Tk()
-root.title("TheGamesDB Browser")
+root.title("Classic Games Browser")
 root.geometry("850x810")
 root.configure(bg=BG)
 
