@@ -19,6 +19,8 @@ A Plague Tale (added by Wyatt)
 
 .hack (added by Wyatt)
 
+ Virtua Fighter (first result clicked for search and Saturn)
+
 # what systems are called in  thegamesDB to go 
 Atari 2600
 
@@ -42,11 +44,11 @@ Sony Playstation (games cached for) (done)
 
 Nintendo 64 (Done) (games cached for)
 
-Sega Saturn(Done)
+Sega Saturn(Done) (games cached for)
 
 Sega Dreamcast (games cached for)(done)
 
-Nintendo GameCube(done)
+Nintendo GameCube(done) (games cached for)
 
 Sony Playstation 2 (games cached for) (done)
 
