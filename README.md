@@ -44,7 +44,7 @@ Nintendo 64 (Done) (games cached for)
 
 Sega Saturn
 
-Sega Dreamcast (games cached for)
+Sega Dreamcast (games cached for)(done)
 
 Nintendo GameCube
 
