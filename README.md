@@ -18,6 +18,7 @@ call of duty modern (added by Wyatt)
 A Plague Tale (added by Wyatt)
 
 .hack (added by Wyatt)
+
 # what systems are called in  thegamesDB to go 
 Atari 2600
 
@@ -37,7 +38,7 @@ Sega Genesis (Done) (games cached for)
     
     Sega 32X
 
-Sony Playstation (games cached for)
+Sony Playstation (games cached for) (done)
 
 Nintendo 64 (Done) (games cached for)
 
@@ -47,7 +48,7 @@ Sega Dreamcast (games cached for)
 
 Nintendo GameCube
 
-Sony Playstation 2 (games cached for)
+Sony Playstation 2 (games cached for) (done)
 
 for example lets take the NES filter what you would change is you would any existing filter and paste it replace like Nintendo Entertainment System in the copy with the new console name from the list also change the filter button name for example chaneg NES to say N64 then replace Nintendo Entertainment System with Nintendo 64.
 then at the bottom of the filter section add
