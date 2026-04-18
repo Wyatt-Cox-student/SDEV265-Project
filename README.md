@@ -7,11 +7,11 @@ Sonic (first result clicked for search and SEGA)
 
 Sonic 2 (first result clicked search and SEGA)
 
-Final Fantasy (first result clicked)
+Final Fantasy (first result clicked for search, ps1, and ps2)
 
-Final Fantasy X (first result clicked)
+Final Fantasy X (first result clicked for search and ps2)
 
-Sonic Adventure (first result clicked)
+Sonic Adventure (first result clicked for search, GameCube, and Dreamcast)
 
 call of duty modern (added by Wyatt)
 
