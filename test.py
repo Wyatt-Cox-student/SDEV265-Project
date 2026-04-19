@@ -14,7 +14,7 @@ BG = "#BCBCBC"
 FG = "black"
 # --- API CONFIG ---
 # Current API key: Teresa's
-#API_KEY = '1b2b1e65b282ff78c4345dfc6dccc509bd50baeeb7b00abfb7533c23f15a962c' #<- change the number between the '' to your API Key
+API_KEY = '1b2b1e65b282ff78c4345dfc6dccc509bd50baeeb7b00abfb7533c23f15a962c' #<- change the number between the '' to your API Key
 BASE_URL = 'https://api.thegamesdb.net/'
 DB_PATH = "gamesdb_cache.db"
 THIRTY_DAYS = 60 * 60 * 24 * 30
@@ -22,7 +22,6 @@ THIRTY_DAYS = 60 * 60 * 24 * 30
 SEARCH_TTL = THIRTY_DAYS
 DETAIL_TTL = THIRTY_DAYS
 LOOKUP_TTL = THIRTY_DAYS
-API_TTL = THIRTY_DAYS
 IMAGE_CACHE_DIR = "image_cache"
 current_detail_image = None
 
@@ -46,13 +45,7 @@ def get_db_connection():
 def init_db():
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS api_key (
-        id INTEGER PRIMARY KEY,
-        key TEXT NOT NULL,
-        updated_at INTEGER NOT NULL
-    )
-    """)
+
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS search_index (
@@ -100,80 +93,6 @@ def init_db():
     conn.commit()
     conn.close()
 
-def save_api_key(key):
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    cur.execute("""
-        INSERT OR REPLACE INTO api_key (id, key, updated_at)
-        VALUES (1, ?, ?)
-    """, (key, int(time.time())))
-
-    conn.commit()
-    conn.close()
-
-def get_api_key():
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    cur.execute("SELECT key, updated_at FROM api_key WHERE id = 1")
-    row = cur.fetchone()
-    conn.close()
-
-    if not row:
-        return None
-
-    key, updated_at = row
-
-    if int(time.time()) - updated_at > API_TTL:
-        return None  # expired
-
-    return key
-
-def build_url(path):
-    key = get_api_key()
-    if not key:
-        raise Exception("API key missing or expired")
-    return f"{BASE_URL}{path}&apikey={key}"
-
-def request_api_key():
-    popup = tk.Toplevel(root)
-    popup.title("Enter API Key")
-    popup.geometry("400x150")
-
-    # 🔥 FORCE TO FRONT
-    popup.transient(root)        # tie it to main window
-    popup.grab_set()             # block interaction with main window
-    popup.lift()                 # bring to front
-    popup.attributes("-topmost", True)  # force top layer
-
-    # (optional but nice) center it
-    popup.update_idletasks()
-    x = root.winfo_x() + (root.winfo_width() // 2) - 200
-    y = root.winfo_y() + (root.winfo_height() // 2) - 75
-    popup.geometry(f"+{x}+{y}")
-
-    tk.Label(popup, text="Enter your API key:").pack(pady=10)
-
-    entry = tk.Entry(popup, width=50)
-    entry.pack(pady=5)
-    entry.focus()  # cursor auto in box
-
-    def submit():
-        key = entry.get().strip()
-        if not key:
-            messagebox.showerror("Error", "API key required")
-            return
-
-        save_api_key(key)
-
-        popup.grab_release()
-        popup.destroy()
-
-        load_platforms()
-        load_genres()
-
-    tk.Button(popup, text="Save", command=submit).pack(pady=10)
 
 def is_fresh(updated_at, ttl):
     return (int(time.time()) - updated_at) < ttl
@@ -299,7 +218,7 @@ def load_platforms():
 
 
     try:
-        resp = requests.get(build_url("v1/Platforms"))
+        resp = requests.get(f"{BASE_URL}v1/Platforms?apikey={API_KEY}")
         data = resp.json()
         platform_cache = {}
         for pid, pdata in data.get("data", {}).get("platforms", {}).items():
@@ -324,7 +243,7 @@ def load_genres():
 
 
     try:
-        resp = requests.get(build_url("v1/Genres"))
+        resp = requests.get(f"{BASE_URL}v1/Genres?apikey={API_KEY}")
         data = resp.json()
         genre_cache = {}
         for gid, gdata in data.get("data", {}).get("genres", {}).items():
@@ -531,9 +450,7 @@ def fetch_game_data_by_name():
 
 
         if games is None:
-            url = build_url("v1/Games/ByGameName", {
-            "name": name
-            })
+            url = f"{BASE_URL}v1/Games/ByGameName?apikey={API_KEY}&name={name}"
             resp = requests.get(url)
             data = resp.json()
             games = data.get("data", {}).get("games", [])
@@ -675,11 +592,7 @@ def fetch_game_details(game_id):
 
 
         if not game or not has_details or needs_boxart_lookup:
-            url = build_url("v1/Games/ByGameID", {
-            "id": game_id,
-            "fields": "overview,players,genres,release_date,platform,game_title",
-            "include": "boxart"
-            })
+            url = f"{BASE_URL}v1/Games/ByGameID?apikey={API_KEY}&id={game_id}&fields=overview,players,genres,release_date,platform,game_title&include=boxart"
             resp = requests.get(url, timeout=15)
             resp.raise_for_status()
             data = resp.json()
@@ -1099,12 +1012,5 @@ init_db()
 load_platforms()
 load_genres()
 
-init_db()
-
-if not get_api_key():
-    request_api_key()
-else:
-    load_platforms()
-    load_genres()
 
 root.mainloop()
