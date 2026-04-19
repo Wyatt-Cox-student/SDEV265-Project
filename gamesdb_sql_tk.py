@@ -788,7 +788,7 @@ search_button.grid(row=0, column=0, padx=5, pady=5)
 
 
 # Clear Button
-clear_button = ctk.CTkButton(buttons_container, text="Reset",
+clear_button = ctk.CTkButton(buttons_container, text="Clear",
                               command=clear_search,
                               bg_color=BG, fg_color=BG, hover_color="#585858",
                               text_color="red", font=("TkDefaultFont", 13, "bold"),
