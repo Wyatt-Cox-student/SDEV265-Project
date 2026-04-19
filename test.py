@@ -788,7 +788,7 @@ search_button.grid(row=0, column=0, padx=5, pady=5)
 
 
 # Clear Button
-clear_button = ctk.CTkButton(buttons_container, text="Clear",
+clear_button = ctk.CTkButton(buttons_container, text="Reset",
                               command=clear_search,
                               bg_color=BG, fg_color=BG, hover_color="#585858",
                               text_color="red", font=("TkDefaultFont", 13, "bold"),
@@ -942,7 +942,7 @@ ps2_button.pack(pady=5, padx=10)
 
 all_button= ctk.CTkButton(
     filter_frame, 
-    text="All",
+    text="Remove",
     command=lambda: apply_filter("All"),
     bg_color= "#000000",
     fg_color= "#000000",
