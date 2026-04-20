@@ -13,6 +13,12 @@ Final Fantasy X (first result clicked for search and ps2)
 
 Sonic Adventure (first result clicked for search, GameCube, and Dreamcast)
 
+1775 (for the Atari 2600)
+
+Air Rescue (for the Sega Master System)
+
+Strife Sisters (for the TurboGrafx 16)
+
 call of duty modern (added by Wyatt)
 
 A Plague Tale (added by Wyatt)
@@ -26,9 +32,9 @@ Atari 2600 (done)
 
 Nintendo Entertainment System (NES) (Done) (games cached for)
 
-Sega Master System (Abbreviation Sega MS)
+Sega Master System (Abbreviation Sega MS) (done)
 
-TurboGrafx 16 
+TurboGrafx 16 (done)
 
 Super Nintendo (SNES) (Done) (games cached for)
 
