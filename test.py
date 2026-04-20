@@ -1159,22 +1159,6 @@ clear_button = ctk.CTkButton(buttons_container, text="Clear",
 clear_button.grid(row=0, column=1, padx=5, pady=5)
 
 
-clear_api_button = ctk.CTkButton(
-    buttons_container,
-    text="Reset API",
-    command=clear_api_key,
-    bg_color=BG,
-    fg_color=BG,
-    hover_color="#585858",
-    text_color="red",
-    font=("TkDefaultFont", 13, "bold"),
-    border_width=2,
-    border_color="black",
-    width=120,
-    height=30
-)
-clear_api_button.grid(row=1, column=0, columnspan=2, pady=5)
-
 
 # ------------------ MAIN ------------------
 
@@ -1193,7 +1177,7 @@ filter_frame.pack(side="left", fill="y", padx = 10, pady =5)
 
 
 
-ctk.CTkLabel(filter_frame, text="Filters", bg_color="#000000", fg_color="#000000", text_color= "white",
+ctk.CTkLabel(filter_frame, text="Filters", bg_color="#000000", fg_color="#000000", text_color= "red",
          font=("TkDefaultFont", 15, "bold"), width=180, height = 40).pack(pady=10, padx = 10)
 
 
@@ -1351,8 +1335,24 @@ all_button= ctk.CTkButton(
 )
 all_button.pack(pady=5, padx=10)
 
+ctk.CTkLabel(filter_frame, text="Tools", bg_color="#000000", fg_color="#000000", text_color= "red",
+         font=("TkDefaultFont", 15, "bold"), width=180, height = 40).pack(pady=10, padx = 10)
 
+clear_api_button = ctk.CTkButton(
+    filter_frame,
+    text="Reset API",
+    command=clear_api_key,
+    bg_color="#000000",
+    fg_color="#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color="red",
+    font=("TkDefaultFont", 15, "bold"),
+    width=180,
+    height=40
+)
 
+clear_api_button.pack(pady=5, padx=10)
 
 filter_buttons["NES"] = nes_button
 filter_buttons["SEGA GEN."] = sega_button
@@ -1364,7 +1364,7 @@ filter_buttons["Dreamcast"] = Dreamcast_button
 filter_buttons["Saturn"] = Saturn_button
 filter_buttons["GameCube"] = GameCube_button
 filter_buttons["All"] = all_button
-
+filter_buttons["Reset API"] = clear_api_button
 
 set_filter_button_styles()
 # ------------------ RESULTS ------------------

@@ -808,7 +808,7 @@ filter_frame = tk.Frame(main_frame, bg=BG, width=150, bd=1, relief="solid")
 filter_frame.pack(side="left", fill="y", padx = 10, pady =5)
 
 
-ctk.CTkLabel(filter_frame, text="Filters", bg_color="#000000", fg_color="#000000", text_color= "white", 
+ctk.CTkLabel(filter_frame, text="Filters", bg_color="#000000", fg_color="#000000", text_color= "red", 
          font=("TkDefaultFont", 15, "bold"), width=180, height = 40).pack(pady=10, padx = 10)
 
 
