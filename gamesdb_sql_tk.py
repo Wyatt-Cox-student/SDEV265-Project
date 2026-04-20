@@ -823,7 +823,7 @@ nes_button = ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180, 
-    height=40
+    height=35
 ) 
 
 nes_button.pack(pady=5, padx=10)
@@ -838,7 +838,7 @@ snes_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180, 
-    height=40
+    height=35
 ) 
 snes_button.pack(pady=5, padx=10)
 
@@ -852,7 +852,7 @@ sega_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180, 
-    height=40
+    height=35
 ) 
 sega_button.pack(pady=5, padx=10)
 
@@ -866,7 +866,7 @@ ps_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180, 
-    height=40
+    height=35
 ) 
 ps_button.pack(pady=5, padx=10)
 
@@ -880,7 +880,7 @@ n64_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180, 
-    height=40
+    height=35
 ) 
 n64_button.pack(pady=5, padx=10)
 
@@ -894,7 +894,7 @@ Saturn_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180, 
-    height=40
+    height=35
 ) 
 Saturn_button.pack(pady=5, padx=10)
 
@@ -908,7 +908,7 @@ Dreamcast_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180, 
-    height=40
+    height=35
 ) 
 Dreamcast_button.pack(pady=5, padx=10)
 
@@ -922,7 +922,7 @@ GameCube_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180, 
-    height=40
+    height=35
 ) 
 GameCube_button.pack(pady=5, padx=10)
 
@@ -936,7 +936,7 @@ ps2_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180, 
-    height=40
+    height=35
 ) 
 ps2_button.pack(pady=5, padx=10)
 
@@ -950,7 +950,7 @@ all_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180, 
-    height=40
+    height=35
 ) 
 all_button.pack(pady=5, padx=10)
 
