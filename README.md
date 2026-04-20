@@ -22,7 +22,7 @@ A Plague Tale (added by Wyatt)
  Virtua Fighter (first result clicked for search and Saturn)
 
 # what systems are called in  thegamesDB to go 
-Atari 2600
+Atari 2600 (done)
 
 Nintendo Entertainment System (NES) (Done) (games cached for)
 

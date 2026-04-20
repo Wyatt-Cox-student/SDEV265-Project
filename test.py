@@ -1006,6 +1006,8 @@ def rebuild_results_only():
             filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Sega Dreamcast")]
         elif active_filter == "Saturn":
             filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Sega Saturn")]
+        elif active_filter == "Atari 2600":
+            filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Atari 2600")]
         elif active_filter == "GameCube":
             filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Nintendo GameCube")]
         else:
@@ -1215,6 +1217,19 @@ snes_button= ctk.CTkButton(
 )
 snes_button.pack(pady=5, padx=10)
 
+atari2600_button= ctk.CTkButton(
+    filter_frame,
+    text="Atari2600",
+    command=lambda: filter_by_platform("Atari 2600", "Atari 2600"),
+    bg_color= "#000000",
+    fg_color= "#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color= "white", font=("TkDefaultFont", 15, "bold"),
+    width=180,
+    height=35
+)
+atari2600_button.pack(pady=5, padx=10)
 
 sega_button= ctk.CTkButton(
     filter_frame,
@@ -1363,6 +1378,7 @@ filter_buttons["PS2"] = ps2_button
 filter_buttons["Dreamcast"] = Dreamcast_button
 filter_buttons["Saturn"] = Saturn_button
 filter_buttons["GameCube"] = GameCube_button
+filter_buttons["Atari 2600"] = atari2600_button
 filter_buttons["All"] = all_button
 filter_buttons["Reset API"] = clear_api_button
 
