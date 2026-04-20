@@ -21,7 +21,7 @@ A Plague Tale (added by Wyatt)
 
  Virtua Fighter (first result clicked for search and Saturn)
 
- 1775 (for atari)
+ 1775 (for atari)(searched by Wyatt)
 
 # what systems are called in  thegamesDB to go 
 Atari 2600 (done)
