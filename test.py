@@ -1008,7 +1008,7 @@ def rebuild_results_only():
             filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Sega Saturn")]
         elif active_filter == "Atari 2600":
             filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Atari 2600")]
-        elif active_filter == "Sega Master System":
+        elif active_filter == "Sega MS":
             filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("Sega Master System")]
         elif active_filter == "TurboGrafx-16":
             filtered = [g for g in last_search_results if g.get("platform") == find_platform_id_by_name("TurboGrafx-16")]
@@ -1190,6 +1190,21 @@ ctk.CTkLabel(filter_frame, text="Filters", bg_color="#000000", fg_color="#000000
 
 
 # Filter Buttons
+
+atari2600_button= ctk.CTkButton(
+    filter_frame,
+    text="Atari2600",
+    command=lambda: filter_by_platform("Atari 2600", "Atari 2600"),
+    bg_color= "#000000",
+    fg_color= "#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color= "white", font=("TkDefaultFont", 15, "bold"),
+    width=180,
+    height=35
+)
+atari2600_button.pack(pady=5, padx=10)
+
 nes_button = ctk.CTkButton(
     filter_frame,
     text="NES",
@@ -1206,6 +1221,35 @@ nes_button = ctk.CTkButton(
 
 nes_button.pack(pady=5, padx=10)
 
+sms_button = ctk.CTkButton(
+    filter_frame, 
+    text="Sega MS",
+    command=lambda: filter_by_platform("Sega MS", "Sega Master System"),
+    bg_color="#000000",
+    fg_color="#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color="white",
+    font=("TkDefaultFont", 15, "bold"),
+    width=180, 
+    height=35
+)
+sms_button.pack(pady=5, padx=10)
+
+tg16_button = ctk.CTkButton(
+    filter_frame, 
+    text="TG16",
+    command=lambda: filter_by_platform("TG16", "TurboGrafx 16"),
+    bg_color="#000000",
+    fg_color="#000000",
+    hover_color="#585858",
+    corner_radius=0,
+    text_color="white",
+    font=("TkDefaultFont", 15, "bold"),
+    width=180, 
+    height=35
+)
+tg16_button.pack(pady=5, padx=10)
 
 snes_button= ctk.CTkButton(
     filter_frame,
@@ -1220,50 +1264,6 @@ snes_button= ctk.CTkButton(
     height=35
 )
 snes_button.pack(pady=5, padx=10)
-
-tg16_button = ctk.CTkButton(
-    filter_frame, 
-    text="TG16",
-    command=lambda: filter_by_platform("TG16", "TurboGrafx 16"),
-    bg_color="#000000",
-    fg_color="#000000",
-    hover_color="#585858",
-    corner_radius=0,
-    text_color="white",
-    font=("TkDefaultFont", 15, "bold"),
-    width=180, 
-    height=40
-)
-tg16_button.pack(pady=5, padx=10)
-
-atari2600_button= ctk.CTkButton(
-    filter_frame,
-    text="Atari2600",
-    command=lambda: filter_by_platform("Atari 2600", "Atari 2600"),
-    bg_color= "#000000",
-    fg_color= "#000000",
-    hover_color="#585858",
-    corner_radius=0,
-    text_color= "white", font=("TkDefaultFont", 15, "bold"),
-    width=180,
-    height=35
-)
-atari2600_button.pack(pady=5, padx=10)
-
-sms_button = ctk.CTkButton(
-    filter_frame, 
-    text="Sega Master System",
-    command=lambda: filter_by_platform("SMS", "Sega Master System"),
-    bg_color="#000000",
-    fg_color="#000000",
-    hover_color="#585858",
-    corner_radius=0,
-    text_color="white",
-    font=("TkDefaultFont", 15, "bold"),
-    width=180, 
-    height=40
-)
-sms_button.pack(pady=5, padx=10)
 
 sega_button= ctk.CTkButton(
     filter_frame,
@@ -1413,7 +1413,7 @@ filter_buttons["Dreamcast"] = Dreamcast_button
 filter_buttons["Saturn"] = Saturn_button
 filter_buttons["GameCube"] = GameCube_button
 filter_buttons["Atari 2600"] = atari2600_button
-filter_buttons["SMS"] = sms_button
+filter_buttons["Sega MS"] = sms_button
 filter_buttons["TG16"] = tg16_button
 filter_buttons["All"] = all_button
 filter_buttons["Reset API"] = clear_api_button
@@ -1498,4 +1498,3 @@ if not API_KEY:
 
 
 root.mainloop()
-
