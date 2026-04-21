@@ -13,8 +13,6 @@ Final Fantasy X (first result clicked for search and ps2)
 
 Sonic Adventure (first result clicked for search, GameCube, and Dreamcast)
 
-1775 (for the Atari 2600)
-
 Air Rescue (for the Sega Master System)
 
 Strife Sisters (for the TurboGrafx 16)
