@@ -973,7 +973,25 @@ def fetch_game_details(game_id):
 
 
 
+def apply_sort(option):
+    global last_search_results
 
+    if not last_search_results:
+        return
+
+    if option == "A → Z":
+        last_search_results.sort(key=lambda g: g.get("game_title", "").lower())
+
+    elif option == "Z → A":
+        last_search_results.sort(key=lambda g: g.get("game_title", "").lower(), reverse=True)
+
+    elif option == "Oldest → Newest":
+        last_search_results.sort(key=lambda g: g.get("release_date") or "")
+
+    elif option == "Newest → Oldest":
+        last_search_results.sort(key=lambda g: g.get("release_date") or "", reverse=True)
+
+    rebuild_results_only()
 
 
 # ------------------ BACK ------------------
@@ -1057,7 +1075,7 @@ def clear_search():
 
 root = tk.Tk()
 root.title("Classic Games Browser")
-root.geometry("850x810")
+root.geometry("850x860")
 root.configure(bg=BG)
 
 
@@ -1387,6 +1405,29 @@ all_button.pack(pady=5, padx=10)
 ctk.CTkLabel(filter_frame, text="Tools", bg_color="#000000", fg_color="#000000", text_color= "red",
          font=("TkDefaultFont", 15, "bold"), width=180, height = 40).pack(pady=10, padx = 10)
 
+sort_var = tk.StringVar(value="Sort")
+
+sort_dropdown = ctk.CTkOptionMenu(
+    filter_frame,
+    values=[
+        "A → Z",
+        "Z → A",
+        "Oldest → Newest",
+        "Newest → Oldest"
+    ],
+    command=apply_sort,
+    variable=sort_var,
+    bg_color="#000000",
+    fg_color="#000000",
+    corner_radius=0,
+    text_color="white",
+    font=("TkDefaultFont", 15, "bold"),
+    width=180,
+    height=35
+)
+
+sort_dropdown.pack(pady=5, padx=10)
+
 clear_api_button = ctk.CTkButton(
     filter_frame,
     text="Reset API",
@@ -1395,7 +1436,7 @@ clear_api_button = ctk.CTkButton(
     fg_color="#000000",
     hover_color="#585858",
     corner_radius=0,
-    text_color="red",
+    text_color="white",
     font=("TkDefaultFont", 15, "bold"),
     width=180,
     height=35
