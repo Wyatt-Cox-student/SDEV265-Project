@@ -766,7 +766,7 @@ def clear_search():
 
 root = tk.Tk()
 root.title("Classic Games Browser")
-root.geometry("850x860")
+root.geometry("850x850")
 root.configure(bg=BG)
 
 # ================= TOP BAR =================
@@ -833,7 +833,7 @@ search_button.grid(row=0, column=0, padx=5, pady=5)
 
 
 # Clear Button
-clear_button = ctk.CTkButton(buttons_container, text="Clear",
+clear_button = ctk.CTkButton(buttons_container, text="Reset",
                               command=clear_search,
                               bg_color=BG, fg_color=BG, hover_color="#585858",
                               text_color="red", font=("TkDefaultFont", 13, "bold"),
@@ -852,7 +852,7 @@ filter_frame = tk.Frame(main_frame, bg=BG, width=150, bd=1, relief="solid")
 filter_frame.pack(side="left", fill="y", padx = 10, pady =5)
 
 ctk.CTkLabel(filter_frame, text="Filters", bg_color="#000000", fg_color="#000000", text_color= "red",
-         font=("TkDefaultFont", 15, "bold"), width=180, height = 40).pack(pady=10, padx = 10)
+         font=("TkDefaultFont", 20, "bold"), width=180, height = 40).pack(pady=10, padx = 10)
 
 
 
@@ -1052,7 +1052,7 @@ all_button= ctk.CTkButton(
 all_button.pack(pady=5, padx=10)
 
 ctk.CTkLabel(filter_frame, text="Tools", bg_color="#000000", fg_color="#000000", text_color= "red",
-         font=("TkDefaultFont", 15, "bold"), width=180, height = 40).pack(pady=10, padx = 10)
+         font=("TkDefaultFont", 20, "bold"), width=180, height = 40).pack(pady=10, padx = 10)
 
 sort_var = tk.StringVar(value="Sort by")
 
@@ -1092,7 +1092,7 @@ clear_api_button = ctk.CTkButton(
     text_color="white",
     font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=35
+    height=30
 )
 
 clear_api_button.pack(pady=5, padx=10)
