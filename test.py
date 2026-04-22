@@ -1423,7 +1423,8 @@ sort_dropdown = ctk.CTkOptionMenu(
     text_color="white",
     font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=35
+    height=35,
+    anchor="center"
 )
 
 sort_dropdown.pack(pady=5, padx=10)
