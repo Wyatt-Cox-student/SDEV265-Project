@@ -40,6 +40,7 @@ current_gallery_items = []
 current_gallery_index = 0
 current_gallery_label = None
 current_gallery_caption = None
+current_gallery_after_id = None
 
 
 
@@ -343,7 +344,14 @@ def ensure_image_cache_dir():
 
 def stop_detail_slideshow():
     global current_gallery_images, current_gallery_items, current_gallery_index
-    global current_gallery_label, current_gallery_caption
+    global current_gallery_label, current_gallery_caption, current_gallery_after_id
+
+
+    if current_gallery_after_id:
+        try:
+            root.after_cancel(current_gallery_after_id)
+        except Exception:
+            pass
 
 
     current_gallery_images = []
@@ -351,6 +359,7 @@ def stop_detail_slideshow():
     current_gallery_index = 0
     current_gallery_label = None
     current_gallery_caption = None
+    current_gallery_after_id = None
 
 
 
@@ -900,9 +909,9 @@ def load_cached_detail_image(game_id, image_url, cache_name, max_size):
 
 
 
-def start_detail_slideshow(parent, game_id, image_items, row_num, max_size=(520, 320)):
+def start_detail_slideshow(parent, game_id, image_items, row_num, max_size=(520, 320), delay_ms=2200):
     global current_gallery_images, current_gallery_items, current_gallery_index
-    global current_gallery_label, current_gallery_caption
+    global current_gallery_label, current_gallery_caption, current_gallery_after_id
 
 
     stop_detail_slideshow()
@@ -955,10 +964,11 @@ def start_detail_slideshow(parent, game_id, image_items, row_num, max_size=(520,
 
 
     def show_image(index):
-        global current_gallery_index
+        global current_gallery_index, current_gallery_after_id
 
 
         if not current_gallery_label or not current_gallery_label.winfo_exists():
+            current_gallery_after_id = None
             return
 
 
@@ -971,29 +981,14 @@ def start_detail_slideshow(parent, game_id, image_items, row_num, max_size=(520,
         current_gallery_caption.configure(
             text=f"{item.get('label', 'Image')} ({current_gallery_index + 1}/{len(current_gallery_images)})"
         )
+        current_gallery_after_id = root.after(delay_ms, lambda: show_image(current_gallery_index + 1))
 
 
-    tk.Button(
+    tk.Label(
         nav_frame,
-        text="Previous",
-        command=lambda: show_image(current_gallery_index - 1),
-        bg="#9F9F9F",
-        fg="white",
-        bd=1.5,
-        relief="solid",
-        width=10
-    ).pack(side="left", padx=(0, 6))
-
-
-    tk.Button(
-        nav_frame,
-        text="Next",
-        command=lambda: show_image(current_gallery_index + 1),
-        bg="#9F9F9F",
-        fg="white",
-        bd=1.5,
-        relief="solid",
-        width=10
+        text="Auto rotating...",
+        bg=BG,
+        fg="gray"
     ).pack(side="left")
 
 
