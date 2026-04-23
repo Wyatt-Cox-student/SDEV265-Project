@@ -1702,6 +1702,3 @@ if not API_KEY:
 
 
 root.mainloop()
-
-
-
