@@ -29,6 +29,9 @@ LOOKUP_TTL = THIRTY_DAYS
 API_TTL = THIRTY_DAYS
 IMAGE_CACHE_DIR = "image_cache"
 current_detail_image = None
+current_slideshow_images = []
+current_slideshow_after_id = None
+current_slideshow_label = None
 
 
 # --- GLOBAL STATE ---
@@ -270,6 +273,20 @@ def save_lookup(table_name, data_dict):
 
 def ensure_image_cache_dir():
     os.makedirs(IMAGE_CACHE_DIR, exist_ok=True)
+
+
+def stop_detail_slideshow():
+    global current_slideshow_after_id, current_slideshow_images, current_slideshow_label
+
+    if current_slideshow_after_id:
+        try:
+            root.after_cancel(current_slideshow_after_id)
+        except Exception:
+            pass
+
+    current_slideshow_after_id = None
+    current_slideshow_images = []
+    current_slideshow_label = None
 
 
 def load_platforms():
@@ -515,6 +532,16 @@ def fetch_game_data_by_name():
 
 
 # Box art pull
+def build_image_url(base_url, image_path):
+    if not image_path:
+        return None
+
+    if image_path.startswith("http"):
+        return image_path
+
+    return f"{base_url}{image_path}" if base_url else None
+
+
 def get_boxart_url(api_data, game_id):
     include = api_data.get("include", {}) or api_data.get("data", {}).get("include", {})
     boxart = include.get("boxart", {})
@@ -544,13 +571,66 @@ def get_boxart_url(api_data, game_id):
 
 
     image_path = art.get("filename") or art.get("url")
-    if not image_path:
-        return None
+    return build_image_url(base_url, image_path)
 
-    if image_path.startswith("http"):
-        return image_path
 
-    return f"{base_url}{image_path}" if base_url else None
+def get_game_media_urls(game_id):
+    url = f"{BASE_URL}v1/Games/Images"
+    resp = requests.get(
+        url,
+        params={
+            "apikey": API_KEY,
+            "games_id": game_id,
+            "filter[type]": "fanart,screenshot"
+        },
+        timeout=15
+    )
+    resp.raise_for_status()
+
+    data = resp.json()
+    base_url = data.get("data", {}).get("base_url", "")
+    if isinstance(base_url, dict):
+        base_url = (
+            base_url.get("original")
+            or base_url.get("large")
+            or base_url.get("medium")
+            or base_url.get("small")
+            or ""
+        )
+
+    image_urls = []
+    seen = set()
+
+    def collect_urls(node):
+        if isinstance(node, dict):
+            image_path = node.get("filename") or node.get("url")
+            image_type = (node.get("type") or "").lower()
+            lowered_path = (image_path or "").lower()
+
+            is_slideshow_image = (
+                image_path
+                and image_type != "boxart"
+                and (
+                    image_type in {"fanart", "screenshot"}
+                    or "fanart/" in lowered_path
+                    or "screenshots/" in lowered_path
+                )
+            )
+
+            if is_slideshow_image:
+                full_url = build_image_url(base_url, image_path)
+                if full_url and full_url not in seen:
+                    seen.add(full_url)
+                    image_urls.append(full_url)
+
+            for value in node.values():
+                collect_urls(value)
+        elif isinstance(node, list):
+            for item in node:
+                collect_urls(item)
+
+    collect_urls(data)
+    return image_urls
 
 
 def load_boxart_image(game_id, image_url, max_size=(300, 420)):
@@ -585,6 +665,83 @@ def load_boxart_image(game_id, image_url, max_size=(300, 420)):
     return ImageTk.PhotoImage(pil_image)
 
 
+def load_cached_detail_image(game_id, image_url, cache_name, max_size):
+    if not game_id or not image_url:
+        return None
+
+    ensure_image_cache_dir()
+    game_cache_dir = os.path.join(IMAGE_CACHE_DIR, str(game_id))
+    os.makedirs(game_cache_dir, exist_ok=True)
+
+    image_path = os.path.join(game_cache_dir, cache_name)
+
+    if os.path.exists(image_path):
+        pil_image = Image.open(image_path)
+        pil_image.thumbnail(max_size, Image.LANCZOS)
+        return ImageTk.PhotoImage(pil_image)
+
+    try:
+        resp = requests.get(image_url, timeout=15)
+        resp.raise_for_status()
+    except requests.HTTPError as e:
+        if e.response is not None and e.response.status_code == 429:
+            return None
+        raise
+
+    with open(image_path, "wb") as image_file:
+        image_file.write(resp.content)
+
+    pil_image = Image.open(BytesIO(resp.content))
+    pil_image.thumbnail(max_size, Image.LANCZOS)
+    return ImageTk.PhotoImage(pil_image)
+
+
+def start_detail_slideshow(parent, game_id, image_urls, row_num, max_size=(520, 300), delay_ms=2500):
+    global current_slideshow_images, current_slideshow_after_id, current_slideshow_label
+
+    stop_detail_slideshow()
+
+    if not image_urls:
+        return
+
+    slideshow_images = []
+    for index, image_url in enumerate(image_urls[:12], start=1):
+        image = load_cached_detail_image(game_id, image_url, f"slide_{index}.jpg", max_size)
+        if image:
+            slideshow_images.append(image)
+
+    if not slideshow_images:
+        return
+
+    tk.Label(
+        results_inner_frame,
+        text="Screenshots / Fan Art:",
+        bg=BG,
+        fg=FG,
+        font=("TkDefaultFont", 10, "bold")
+    ).grid(row=row_num, column=0, sticky="nw", padx=(0, 10), pady=(14, 4))
+
+    current_slideshow_label = tk.Label(results_inner_frame, bg=BG)
+    current_slideshow_label.grid(row=row_num, column=1, sticky="w", pady=(14, 4))
+
+    current_slideshow_images = slideshow_images
+
+    def show_slide(index=0):
+        global current_slideshow_after_id
+
+        if not current_slideshow_label or not current_slideshow_label.winfo_exists():
+            current_slideshow_after_id = None
+            return
+
+        current_slideshow_label.configure(image=current_slideshow_images[index])
+        current_slideshow_label.image = current_slideshow_images[index]
+
+        next_index = (index + 1) % len(current_slideshow_images)
+        current_slideshow_after_id = root.after(delay_ms, lambda: show_slide(next_index))
+
+    show_slide()
+
+
 def has_cached_boxart_image(game_id):
     if not game_id:
         return False
@@ -600,6 +757,7 @@ def fetch_game_details(game_id):
     global is_showing_detail, current_detail_image
     is_showing_detail = True
     current_detail_image = None
+    stop_detail_slideshow()
     if not require_api_key():
         return
 
@@ -615,6 +773,7 @@ def fetch_game_details(game_id):
         game, has_details = get_cached_game(game_id)
 
         needs_boxart_lookup = game and has_details and not game.get("boxart_url") and not has_cached_boxart_image(game_id)
+        needs_media_lookup = game and has_details and not game.get("slideshow_image_urls")
 
         if not game or not has_details or needs_boxart_lookup:
             url = f"{BASE_URL}v1/Games/ByGameID?apikey={API_KEY}&id={game_id}&fields=overview,players,genres,release_date,platform,game_title&include=boxart"
@@ -628,7 +787,11 @@ def fetch_game_details(game_id):
 
             game = games[0]
             game["boxart_url"] = get_boxart_url(data, game_id)
-            save_game(game, has_details=True)
+
+        if not game.get("slideshow_image_urls") or needs_media_lookup:
+            game["slideshow_image_urls"] = get_game_media_urls(game_id)
+
+        save_game(game, has_details=True)
 
         current_detail_image = load_boxart_image(game_id, game.get("boxart_url"))
 
@@ -665,6 +828,13 @@ def fetch_game_details(game_id):
                 wraplength=500,
                 justify="left"
             ).grid(row=i, column=1, sticky="w", pady=2)
+
+        start_detail_slideshow(
+            results_inner_frame,
+            game_id,
+            game.get("slideshow_image_urls", []),
+            len(fields) + 1
+        )
 
     except Exception as e:
         messagebox.showerror("Error", str(e))
@@ -744,6 +914,7 @@ def show_previous_results():
     global is_showing_detail
 
     is_showing_detail = False
+    stop_detail_slideshow()
     back_button.pack_forget()
 
     rebuild_results_only()
@@ -753,6 +924,7 @@ def clear_search():
     global active_filter
 
     entry_name.delete(0, tk.END)
+    stop_detail_slideshow()
     for w in results_inner_frame.winfo_children():
         w.destroy()
     back_button.pack_forget()
