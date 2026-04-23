@@ -909,7 +909,7 @@ def load_cached_detail_image(game_id, image_url, cache_name, max_size):
 
 
 
-def start_detail_slideshow(parent, game_id, image_items, row_num, max_size=(520, 320), delay_ms=2200):
+def start_detail_slideshow(parent, game_id, image_items, row_num, max_size=(450, 300), delay_ms=2200):
     global current_gallery_images, current_gallery_items, current_gallery_index
     global current_gallery_label, current_gallery_caption, current_gallery_after_id
 
@@ -940,23 +940,23 @@ def start_detail_slideshow(parent, game_id, image_items, row_num, max_size=(520,
         bg=BG,
         fg=FG,
         font=("TkDefaultFont", 10, "bold")
-    ).grid(row=row_num, column=0, sticky="nw", padx=(0, 10), pady=(14, 4))
+    ).grid(row=row_num, column=0, sticky="n", padx=(0, 10), pady=(14, 4))
 
 
     gallery_frame = tk.Frame(parent, bg=BG)
-    gallery_frame.grid(row=row_num, column=1, sticky="w", pady=(14, 4))
+    gallery_frame.grid(row=row_num, column=1, sticky="n", pady=(14, 4))
 
 
     current_gallery_label = tk.Label(gallery_frame, bg=BG)
-    current_gallery_label.pack(anchor="w")
+    current_gallery_label.pack(anchor="center")
 
 
     current_gallery_caption = tk.Label(gallery_frame, bg=BG, fg=FG, justify="left")
-    current_gallery_caption.pack(anchor="w", pady=(6, 4))
+    current_gallery_caption.pack(anchor="center", pady=(6, 4))
 
 
     nav_frame = tk.Frame(gallery_frame, bg=BG)
-    nav_frame.pack(anchor="w")
+    nav_frame.pack(anchor="center")
 
 
     current_gallery_images = gallery_images
@@ -982,14 +982,6 @@ def start_detail_slideshow(parent, game_id, image_items, row_num, max_size=(520,
             text=f"{item.get('label', 'Image')} ({current_gallery_index + 1}/{len(current_gallery_images)})"
         )
         current_gallery_after_id = root.after(delay_ms, lambda: show_image(current_gallery_index + 1))
-
-
-    tk.Label(
-        nav_frame,
-        text="Auto rotating...",
-        bg=BG,
-        fg="gray"
-    ).pack(side="left")
 
 
     show_image(0)
@@ -1039,7 +1031,7 @@ def fetch_game_details(game_id):
 
 
         needs_boxart_lookup = game and has_details and not game.get("boxart_url") and not has_cached_boxart_image(game_id)
-        needs_media_lookup = True
+        needs_media_lookup = not game or not has_details or not game.get("media_image_items")
 
 
         if not game or not has_details or needs_boxart_lookup:
