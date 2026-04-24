@@ -6,7 +6,7 @@ from tkinter import messagebox
 import customtkinter as ctk
 import requests
 import sqlite3
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, UnidentifiedImageError
 from io import BytesIO
 
 
@@ -338,6 +338,33 @@ def save_lookup(table_name, data_dict):
 
 def ensure_image_cache_dir():
     os.makedirs(IMAGE_CACHE_DIR, exist_ok=True)
+
+
+def remove_cached_image(image_path):
+    try:
+        if os.path.exists(image_path):
+            os.remove(image_path)
+    except OSError:
+        pass
+
+
+def load_photo_image_from_path(image_path, max_size):
+    try:
+        with Image.open(image_path) as pil_image:
+            pil_image.thumbnail(max_size, Image.LANCZOS)
+            return ImageTk.PhotoImage(pil_image.copy())
+    except (FileNotFoundError, OSError, UnidentifiedImageError):
+        remove_cached_image(image_path)
+        return None
+
+
+def load_photo_image_from_bytes(image_bytes, max_size):
+    try:
+        with Image.open(BytesIO(image_bytes)) as pil_image:
+            pil_image.thumbnail(max_size, Image.LANCZOS)
+            return ImageTk.PhotoImage(pil_image.copy())
+    except (OSError, UnidentifiedImageError):
+        return None
 
 
 
@@ -841,9 +868,9 @@ def load_boxart_image(game_id, image_url, max_size=(300, 420)):
 
 
     if os.path.exists(image_path):
-        pil_image = Image.open(image_path)
-        pil_image.thumbnail(max_size, Image.LANCZOS)
-        return ImageTk.PhotoImage(pil_image)
+        cached_image = load_photo_image_from_path(image_path, max_size)
+        if cached_image:
+            return cached_image
 
 
 
@@ -854,7 +881,9 @@ def load_boxart_image(game_id, image_url, max_size=(300, 420)):
     except requests.HTTPError as e:
         if e.response is not None and e.response.status_code == 429:
             return None
-        raise
+        return None
+    except requests.RequestException:
+        return None
 
 
 
@@ -862,10 +891,12 @@ def load_boxart_image(game_id, image_url, max_size=(300, 420)):
     with open(image_path, "wb") as image_file:
         image_file.write(resp.content)
 
+    image = load_photo_image_from_bytes(resp.content, max_size)
+    if image:
+        return image
 
-    pil_image = Image.open(BytesIO(resp.content))
-    pil_image.thumbnail(max_size, Image.LANCZOS)
-    return ImageTk.PhotoImage(pil_image)
+    remove_cached_image(image_path)
+    return None
 
 
 
@@ -884,9 +915,9 @@ def load_cached_detail_image(game_id, image_url, cache_name, max_size):
 
 
     if os.path.exists(image_path):
-        pil_image = Image.open(image_path)
-        pil_image.thumbnail(max_size, Image.LANCZOS)
-        return ImageTk.PhotoImage(pil_image)
+        cached_image = load_photo_image_from_path(image_path, max_size)
+        if cached_image:
+            return cached_image
 
 
     try:
@@ -895,16 +926,20 @@ def load_cached_detail_image(game_id, image_url, cache_name, max_size):
     except requests.HTTPError as e:
         if e.response is not None and e.response.status_code == 429:
             return None
-        raise
+        return None
+    except requests.RequestException:
+        return None
 
 
     with open(image_path, "wb") as image_file:
         image_file.write(resp.content)
 
+    image = load_photo_image_from_bytes(resp.content, max_size)
+    if image:
+        return image
 
-    pil_image = Image.open(BytesIO(resp.content))
-    pil_image.thumbnail(max_size, Image.LANCZOS)
-    return ImageTk.PhotoImage(pil_image)
+    remove_cached_image(image_path)
+    return None
 
 
 
@@ -1051,7 +1086,11 @@ def fetch_game_details(game_id):
 
 
         if needs_media_lookup:
-            game["media_image_items"] = get_game_media_urls(game_id)
+            try:
+                game["media_image_items"] = get_game_media_urls(game_id)
+            except Exception as media_error:
+                print(f"Skipping slideshow images for game {game_id}: {media_error}")
+                game["media_image_items"] = game.get("media_image_items", [])
 
 
         save_game(game, has_details=True)
