@@ -9,6 +9,9 @@ import sqlite3
 from PIL import Image, ImageTk, UnidentifiedImageError
 from io import BytesIO
 
+
+
+
 # --- COLORS ---
 BG = "#BCBCBC"
 FG = "black"
@@ -20,9 +23,14 @@ DB_PATH = "gamesdb_cache.db"
 THIRTY_DAYS = 60 * 60 * 24 * 30
 
 
+
+
 SEARCH_TTL = THIRTY_DAYS
 DETAIL_TTL = THIRTY_DAYS
 LOOKUP_TTL = THIRTY_DAYS
+
+
+
 
 API_TTL = THIRTY_DAYS
 IMAGE_CACHE_DIR = "image_cache"
@@ -33,6 +41,9 @@ current_gallery_index = 0
 current_gallery_label = None
 current_gallery_caption = None
 current_gallery_after_id = None
+
+
+
 
 # --- GLOBAL STATE ---
 platform_cache = {}
@@ -57,6 +68,9 @@ def get_db_connection():
 def init_db():
     conn = get_db_connection()
     cur = conn.cursor()
+
+
+
 
     cur.execute("""
     CREATE TABLE IF NOT EXISTS api_key_cache (
@@ -104,6 +118,9 @@ def init_db():
     conn.commit()
     conn.close()
 
+
+
+
 def get_cached_api_key():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -115,6 +132,9 @@ def get_cached_api_key():
     if row and is_fresh(row[1], API_TTL):
         return row[0]
     return None
+
+
+
 
 def save_api_key(key):
     conn = get_db_connection()
@@ -159,14 +179,21 @@ def prompt_for_api_key():
 
     tk.Button(popup, text="Save", command=submit).pack(pady=10)
 
+
+
+
 def require_api_key():
     if not API_KEY:
         messagebox.showerror("API Key Missing", "Please enter API key first")
         return False
     return True
 
+
+
+
 def clear_api_key():
     global API_KEY
+
 
     conn = get_db_connection()
     cur = conn.cursor()
@@ -174,15 +201,22 @@ def clear_api_key():
     conn.commit()
     conn.close()
 
+
     API_KEY = None
 
+
     messagebox.showinfo("API Key", "API key cleared. Please enter a new one.")
+
 
     root.after(100, prompt_for_api_key)
 
 
+
+
 def is_fresh(updated_at, ttl):
     return (int(time.time()) - updated_at) < ttl
+
+
 
 
 def get_cached_search(query):
@@ -198,6 +232,8 @@ def get_cached_search(query):
     return None
 
 
+
+
 def save_search(query, games):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -207,6 +243,8 @@ def save_search(query, games):
     """, (query, json.dumps(games), int(time.time())))
     conn.commit()
     conn.close()
+
+
 
 
 def get_cached_game(game_id):
@@ -220,6 +258,8 @@ def get_cached_game(game_id):
     if row and is_fresh(row[2], DETAIL_TTL):
         return json.loads(row[0]), bool(row[1])
     return None, False
+
+
 
 
 def save_game(game, has_details=False):
@@ -253,6 +293,8 @@ def save_game(game, has_details=False):
     conn.close()
 
 
+
+
 def get_cached_lookup(table_name, ttl):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -273,6 +315,8 @@ def get_cached_lookup(table_name, ttl):
     return {int(row[0]): row[1] for row in rows}
 
 
+
+
 def save_lookup(table_name, data_dict):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -288,6 +332,7 @@ def save_lookup(table_name, data_dict):
 
     conn.commit()
     conn.close()
+
 
 
 
@@ -1229,7 +1274,7 @@ def clear_search():
 
 root = tk.Tk()
 root.title("Classic Games Browser")
-root.geometry("900x900")
+root.geometry("850x850")
 root.configure(bg=BG)
 
 
@@ -1269,14 +1314,10 @@ right_bar = tk.Frame(top_frame, bg=BG)
 right_bar.pack(side="left", fill="x", expand=True)
 
 
+
+
 # Search CONTAINER
-search_container = tk.Frame(
-    right_bar,
-    bg=BG,
-    bd=1,
-    relief="solid",
-    padx=5, pady=20
-)
+search_container = tk.Frame(right_bar, bg=BG)
 search_container.pack(anchor="center")
 
 
