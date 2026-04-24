@@ -1317,15 +1317,17 @@ right_bar.pack(side="left", fill="x", expand=True)
 
 
 # Search CONTAINER
-search_container = tk.Frame(right_bar, bg=BG, bd=1, relief="solid")
+search_container = tk.Frame(right_bar, bg=BG)
 search_container.pack(anchor="center")
 
+Entry_container = tk.Frame(search_container, bg=BG, bd=1, relief="solid")
+Entry_container.pack(side="left", padx=5)
 
-tk.Label(search_container, text="Search:", bg=BG, fg=FG).pack(side="left")
+tk.Label(Entry_container, text="Search:", bg=BG, fg=FG).pack(side="left")
 
 
-entry_name = tk.Entry(search_container, width=30)
-entry_name.pack(side="left", padx=5)
+entry_name = tk.Entry(Entry_container, width=30)
+entry_name.pack(side="left", padx=5, pady = 25)
 
 
 
@@ -1390,13 +1392,7 @@ filter_frame.pack(side="left", fill="y", padx = 10, pady =5)
 
 
 ctk.CTkLabel(filter_frame, text="Filters", bg_color="#000000", fg_color="#000000", text_color= "red",
-         font=("TkDefaultFont", 20, "bold"), width=180, height = 40).pack(pady=10, padx = 10)
-
-
-
-
-
-
+         font=("TkDefaultFont", 20, "bold"), width=180, height = 35).pack(pady=10, padx = 10)
 
 
 # Filter Buttons
@@ -1410,7 +1406,7 @@ atari2600_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=35
+    height=32
 )
 atari2600_button.pack(pady=5, padx=10)
 
@@ -1425,12 +1421,8 @@ nes_button = ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=35
+    height=32
 )
-
-
-
-
 nes_button.pack(pady=5, padx=10)
 
 
@@ -1445,7 +1437,7 @@ sms_button = ctk.CTkButton(
     text_color="white",
     font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=35
+    height=32
 )
 sms_button.pack(pady=5, padx=10)
 
@@ -1461,7 +1453,7 @@ tg16_button = ctk.CTkButton(
     text_color="white",
     font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=35
+    height=32
 )
 tg16_button.pack(pady=5, padx=10)
 
@@ -1476,7 +1468,7 @@ snes_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=35
+    height=32
 )
 snes_button.pack(pady=5, padx=10)
 
@@ -1491,7 +1483,7 @@ sega_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=35
+    height=32
 )
 sega_button.pack(pady=5, padx=10)
 
@@ -1508,7 +1500,7 @@ ps_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=35
+    height=32
 )
 ps_button.pack(pady=5, padx=10)
 
@@ -1525,7 +1517,7 @@ n64_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=35
+    height=32
 )
 n64_button.pack(pady=5, padx=10)
 
@@ -1542,7 +1534,7 @@ Saturn_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=35
+    height=32
 )
 Saturn_button.pack(pady=5, padx=10)
 
@@ -1559,7 +1551,7 @@ Dreamcast_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=35
+    height=32
 )
 Dreamcast_button.pack(pady=5, padx=10)
 
@@ -1576,7 +1568,7 @@ GameCube_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=35
+    height=32
 )
 GameCube_button.pack(pady=5, padx=10)
 
@@ -1593,7 +1585,7 @@ ps2_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=35
+    height=32
 )
 ps2_button.pack(pady=5, padx=10)
 
@@ -1610,13 +1602,13 @@ all_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=35
+    height=32
 )
 all_button.pack(pady=5, padx=10)
 
 
 ctk.CTkLabel(filter_frame, text="Tools", bg_color="#000000", fg_color="#000000", text_color= "red",
-         font=("TkDefaultFont", 20, "bold"), width=180, height = 40).pack(pady=10, padx = 10)
+         font=("TkDefaultFont", 20, "bold"), width=180, height = 35).pack(pady=10, padx = 10)
 
 
 sort_var = tk.StringVar(value="Sort by")
@@ -1641,7 +1633,7 @@ sort_dropdown = ctk.CTkOptionMenu(
     text_color="white",
     font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=35,
+    height=32,
     anchor="center"
 )
 
@@ -1660,7 +1652,7 @@ clear_api_button = ctk.CTkButton(
     text_color="white",
     font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=30
+    height=28
 )
 
 
