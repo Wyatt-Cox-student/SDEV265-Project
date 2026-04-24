@@ -1317,7 +1317,7 @@ right_bar.pack(side="left", fill="x", expand=True)
 
 
 # Search CONTAINER
-search_container = tk.Frame(right_bar, bg=BG, bd=1, relief="solid", pady=20)
+search_container = tk.Frame(right_bar, bg=BG)
 search_container.pack(anchor="center")
 
 
@@ -1325,12 +1325,18 @@ tk.Label(search_container, text="Search:", bg=BG, fg=FG).pack(side="left")
 
 
 entry_name = tk.Entry(search_container, width=30)
-entry_name.pack(side="left")
+entry_name.pack(side="left", padx=5)
+
+
+
+
+
+
 
 
 # ----------------- BUTTON CONTAINER -----------------
 buttons_container = tk.Frame(search_container, bg=BG)
-buttons_container.pack(side="left")
+buttons_container.pack(side="left", padx=5)
 
 
 buttons_container.grid_columnconfigure(0, minsize=90)
@@ -1385,6 +1391,13 @@ filter_frame.pack(side="left", fill="y", padx = 10, pady =5)
 
 ctk.CTkLabel(filter_frame, text="Filters", bg_color="#000000", fg_color="#000000", text_color= "red",
          font=("TkDefaultFont", 20, "bold"), width=180, height = 40).pack(pady=10, padx = 10)
+
+
+
+
+
+
+
 
 # Filter Buttons
 atari2600_button= ctk.CTkButton(
