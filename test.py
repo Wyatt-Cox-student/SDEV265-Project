@@ -1299,7 +1299,7 @@ back_button = tk.Button(
     left_bar,
     text="← Back",
     command=show_previous_results,
-    bg="#9F9F9F",
+    bg="#2E2E2E",
     fg="white",
     bd=1.5,
     relief="solid",
@@ -1387,7 +1387,7 @@ main_frame = tk.Frame(root, bg=BG)
 main_frame.pack(fill="both", expand=True)
 
 
-filter_frame = tk.Frame(main_frame, bg=BG, width=150, bd=1, relief="solid")
+filter_frame = tk.Frame(main_frame, bg="#2E2E2E", width=150, bd=1, relief="solid")
 filter_frame.pack(side="left", fill="y", padx = 10, pady =5)
 
 
