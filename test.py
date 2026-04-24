@@ -1317,7 +1317,7 @@ right_bar.pack(side="left", fill="x", expand=True)
 
 
 # Search CONTAINER
-search_container = tk.Frame(right_bar, bg=BG)
+search_container = tk.Frame(right_bar, bg=BG, bd=1, relief="solid")
 search_container.pack(anchor="center")
 
 
