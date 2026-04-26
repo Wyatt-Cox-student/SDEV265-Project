@@ -1656,7 +1656,7 @@ sort_dropdown.pack(pady=5, padx=10)
 
 clear_api_button = ctk.CTkButton(
     filter_frame,
-    text="Reset API",
+    text="Eject API",
     command=clear_api_key,
     bg_color="#000000",
     fg_color="#000000",
