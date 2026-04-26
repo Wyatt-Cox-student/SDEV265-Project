@@ -1279,7 +1279,7 @@ def update_status_square(has_results):
 
 root = tk.Tk()
 root.title("Classic Games Browser")
-root.geometry("850x850")
+root.geometry("850x950")
 root.configure(bg=BG)
 
 
@@ -1730,7 +1730,10 @@ results_canvas.pack(side="left", fill="both", expand=True)
 scrollbar.pack(side="right", fill="y")
 
 
-
+# bottom bar
+bottom_bar = tk.Frame(root, bg="black", height=100)
+bottom_bar.pack(side="bottom", fill="x")
+bottom_bar.pack_propagate(False)
 
 # ------------------ INIT ------------------
 init_db()
