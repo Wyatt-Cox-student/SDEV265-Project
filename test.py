@@ -684,16 +684,18 @@ def fetch_game_data_by_name():
 
 
         if games:
+            update_status_square(True) 
             for game in games:
                 build_result_row(game)
         else:
+            update_status_square(False) 
             tk.Label(results_inner_frame, text="No games found.", bg=BG, fg=FG).pack()
 
 
     except Exception as e:
         messagebox.showerror("Error", str(e))
 
-
+    
 
 
 # Box art pull
@@ -1261,10 +1263,13 @@ def clear_search():
     back_button.pack_forget()
     active_filter = None
     set_filter_button_styles()
+    update_status_square(False)
 
-
-
-
+def update_status_square(has_results):
+    if has_results:
+        status_square.config(bg="green")
+    else:
+        status_square.config(bg="red")
 
 
 
@@ -1306,7 +1311,15 @@ back_button = tk.Button(
     width= 12
 )
 
-
+status_square = tk.Label(
+    left_bar,
+    width=2,
+    height=1,
+    bg="red",
+    bd=0,
+    relief="solid"
+)
+status_square.pack(side="left", pady=5, padx = 5)
 
 
 # SEARCH AREA
