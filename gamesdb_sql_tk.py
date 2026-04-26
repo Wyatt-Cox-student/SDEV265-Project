@@ -684,16 +684,18 @@ def fetch_game_data_by_name():
 
 
         if games:
+            update_status_square(True) 
             for game in games:
                 build_result_row(game)
         else:
+            update_status_square(False) 
             tk.Label(results_inner_frame, text="No games found.", bg=BG, fg=FG).pack()
 
 
     except Exception as e:
         messagebox.showerror("Error", str(e))
 
-
+    
 
 
 # Box art pull
@@ -1261,10 +1263,13 @@ def clear_search():
     back_button.pack_forget()
     active_filter = None
     set_filter_button_styles()
+    update_status_square(False)
 
-
-
-
+def update_status_square(has_results):
+    if has_results:
+        status_square.config(bg="green")
+    else:
+        status_square.config(bg="red")
 
 
 
@@ -1274,8 +1279,21 @@ def clear_search():
 
 root = tk.Tk()
 root.title("Classic Games Browser")
-root.geometry("850x850")
+root.geometry("900x835")
+root.minsize(900, 835)
 root.configure(bg=BG)
+
+# label
+Label_bar = tk.Frame(root, bg=BG, height=20)
+Label_bar.pack(side="top", fill="x")
+Label_bar.pack_propagate(False)
+
+tk.Label(
+    Label_bar,
+    text="Enter search Below and click start",
+    bg=BG,
+    fg="black"
+).pack(anchor="center")
 
 
 # ================= TOP BAR =================
@@ -1306,7 +1324,15 @@ back_button = tk.Button(
     width= 12
 )
 
-
+status_square = tk.Label(
+    left_bar,
+    width=2,
+    height=1,
+    bg="red",
+    bd=0,
+    relief="solid"
+)
+status_square.pack(side="left", pady=5, padx = 5)
 
 
 # SEARCH AREA
@@ -1323,11 +1349,11 @@ search_container.pack(anchor="center")
 Entry_container = tk.Frame(search_container, bg=BG, bd=1, relief="solid")
 Entry_container.pack(side="left", padx=5)
 
-tk.Label(Entry_container, text="Search:", bg=BG, fg=FG).pack(side="left")
+tk.Label(Entry_container, text="Search:", bg=BG, fg=FG).pack(side="left",  padx=(10, 5))
 
 
-entry_name = tk.Entry(Entry_container, width=30)
-entry_name.pack(side="left", padx=5, pady = 25)
+entry_name = tk.Entry(Entry_container, width=36)
+entry_name.pack(side="left", padx=(5,20), pady = 15)
 
 
 
@@ -1355,12 +1381,12 @@ buttons_container.grid_rowconfigure(0, weight=1, minsize=30)
 
 
 # Search Button
-search_button = ctk.CTkButton(buttons_container, text="Search",
+search_button = ctk.CTkButton(buttons_container, text="Start",
                                command=fetch_game_data_by_name,
                                bg_color=BG, fg_color=BG, hover_color="#585858",
                                text_color="red", font=("TkDefaultFont", 13, "bold"),  
                                border_width=2, border_color="black",
-                               width=100, height=30)
+                               width=90, height=30)
 search_button.grid(row=0, column=0, padx=5, pady=5)
 
 
@@ -1372,10 +1398,8 @@ clear_button = ctk.CTkButton(buttons_container, text="Reset",
                               bg_color=BG, fg_color=BG, hover_color="#585858",
                               text_color="red", font=("TkDefaultFont", 13, "bold"),
                               border_width=2, border_color="black",  
-                              width=100, height=30)  
+                              width=90, height=30)  
 clear_button.grid(row=0, column=1, padx=5, pady=5)
-
-
 
 
 # ------------------ MAIN ------------------
@@ -1392,7 +1416,7 @@ filter_frame.pack(side="left", fill="y", padx = 10, pady =5)
 
 
 ctk.CTkLabel(filter_frame, text="Filters", bg_color="#000000", fg_color="#000000", text_color= "red",
-         font=("TkDefaultFont", 20, "bold"), width=180, height = 35).pack(pady=10, padx = 10)
+         font=("TkDefaultFont", 20, "bold"), width=180, height = 30).pack(pady=5, padx = 10)
 
 
 # Filter Buttons
@@ -1406,7 +1430,7 @@ atari2600_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=32
+    height=27
 )
 atari2600_button.pack(pady=5, padx=10)
 
@@ -1421,7 +1445,7 @@ nes_button = ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=32
+    height=27
 )
 nes_button.pack(pady=5, padx=10)
 
@@ -1437,7 +1461,7 @@ sms_button = ctk.CTkButton(
     text_color="white",
     font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=32
+    height=27
 )
 sms_button.pack(pady=5, padx=10)
 
@@ -1453,7 +1477,7 @@ tg16_button = ctk.CTkButton(
     text_color="white",
     font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=32
+    height=27
 )
 tg16_button.pack(pady=5, padx=10)
 
@@ -1468,7 +1492,7 @@ snes_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=32
+    height=27
 )
 snes_button.pack(pady=5, padx=10)
 
@@ -1483,7 +1507,7 @@ sega_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=32
+    height=27
 )
 sega_button.pack(pady=5, padx=10)
 
@@ -1500,7 +1524,7 @@ ps_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=32
+    height=27
 )
 ps_button.pack(pady=5, padx=10)
 
@@ -1517,7 +1541,7 @@ n64_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=32
+    height=27
 )
 n64_button.pack(pady=5, padx=10)
 
@@ -1534,7 +1558,7 @@ Saturn_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=32
+    height=27
 )
 Saturn_button.pack(pady=5, padx=10)
 
@@ -1551,7 +1575,7 @@ Dreamcast_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=32
+    height=27
 )
 Dreamcast_button.pack(pady=5, padx=10)
 
@@ -1568,7 +1592,7 @@ GameCube_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=32
+    height=27
 )
 GameCube_button.pack(pady=5, padx=10)
 
@@ -1585,7 +1609,7 @@ ps2_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=32
+    height=27
 )
 ps2_button.pack(pady=5, padx=10)
 
@@ -1602,13 +1626,13 @@ all_button= ctk.CTkButton(
     corner_radius=0,
     text_color= "white", font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=32
+    height=27
 )
 all_button.pack(pady=5, padx=10)
 
 
 ctk.CTkLabel(filter_frame, text="Tools", bg_color="#000000", fg_color="#000000", text_color= "red",
-         font=("TkDefaultFont", 20, "bold"), width=180, height = 35).pack(pady=10, padx = 10)
+         font=("TkDefaultFont", 20, "bold"), width=180, height = 30).pack(pady=5, padx = 10)
 
 
 sort_var = tk.StringVar(value="Sort by")
@@ -1633,7 +1657,7 @@ sort_dropdown = ctk.CTkOptionMenu(
     text_color="white",
     font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=32,
+    height=27,
     anchor="center"
 )
 
@@ -1643,7 +1667,7 @@ sort_dropdown.pack(pady=5, padx=10)
 
 clear_api_button = ctk.CTkButton(
     filter_frame,
-    text="Reset API",
+    text="Eject API",
     command=clear_api_key,
     bg_color="#000000",
     fg_color="#000000",
@@ -1652,7 +1676,7 @@ clear_api_button = ctk.CTkButton(
     text_color="white",
     font=("TkDefaultFont", 15, "bold"),
     width=180,
-    height=28
+    height=27
 )
 
 
@@ -1717,7 +1741,10 @@ results_canvas.pack(side="left", fill="both", expand=True)
 scrollbar.pack(side="right", fill="y")
 
 
-
+# bottom bar
+bottom_bar = tk.Frame(root, bg="black", height=95)
+bottom_bar.pack(side="bottom", fill="x")
+bottom_bar.pack_propagate(False)
 
 # ------------------ INIT ------------------
 init_db()
