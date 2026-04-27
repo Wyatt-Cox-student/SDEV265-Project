@@ -1279,8 +1279,8 @@ def update_status_square(has_results):
 
 root = tk.Tk()
 root.title("Classic Games Browser")
-root.geometry("900x835")
-root.minsize(900, 835)
+root.geometry("900x715")
+root.minsize(900, 775)
 root.configure(bg=BG)
 
 # label
@@ -1412,9 +1412,38 @@ main_frame.pack(fill="both", expand=True)
 
 
 filter_frame = tk.Frame(main_frame, bg="#2E2E2E", width=150, bd=1, relief="solid")
-filter_frame.pack(side="left", fill="y", padx = 10, pady =5)
+filter_frame.pack(side="left", fill="y", padx = 10)
+
+sort_var = tk.StringVar(value="Sort by")
 
 
+sort_dropdown = ctk.CTkOptionMenu(
+    filter_frame,
+    values=[
+        "Sort by",
+        "A → Z",
+        "Z → A",
+        "Oldest → Newest",
+        "Newest → Oldest"
+    ],
+    command=apply_sort,
+    variable=sort_var,
+    bg_color="#000000",
+    fg_color="#000000",
+    corner_radius=0,
+    button_color="#000000",
+    button_hover_color="#585858",
+    text_color="white",
+    font=("TkDefaultFont", 15, "bold"),
+    width=180,
+    height=27,
+    anchor="center"
+)
+
+
+sort_dropdown.pack(pady=5, padx=10)
+
+# filter label
 ctk.CTkLabel(filter_frame, text="Filters", bg_color="#000000", fg_color="#000000", text_color= "red",
          font=("TkDefaultFont", 20, "bold"), width=180, height = 30).pack(pady=5, padx = 10)
 
@@ -1631,58 +1660,6 @@ all_button= ctk.CTkButton(
 all_button.pack(pady=5, padx=10)
 
 
-ctk.CTkLabel(filter_frame, text="Tools", bg_color="#000000", fg_color="#000000", text_color= "red",
-         font=("TkDefaultFont", 20, "bold"), width=180, height = 30).pack(pady=5, padx = 10)
-
-
-sort_var = tk.StringVar(value="Sort by")
-
-
-sort_dropdown = ctk.CTkOptionMenu(
-    filter_frame,
-    values=[
-        "Sort by",
-        "A → Z",
-        "Z → A",
-        "Oldest → Newest",
-        "Newest → Oldest"
-    ],
-    command=apply_sort,
-    variable=sort_var,
-    bg_color="#000000",
-    fg_color="#000000",
-    corner_radius=0,
-    button_color="#000000",
-    button_hover_color="#585858",
-    text_color="white",
-    font=("TkDefaultFont", 15, "bold"),
-    width=180,
-    height=27,
-    anchor="center"
-)
-
-
-sort_dropdown.pack(pady=5, padx=10)
-
-
-clear_api_button = ctk.CTkButton(
-    filter_frame,
-    text="Eject API",
-    command=clear_api_key,
-    bg_color="#000000",
-    fg_color="#000000",
-    hover_color="#585858",
-    corner_radius=0,
-    text_color="white",
-    font=("TkDefaultFont", 15, "bold"),
-    width=180,
-    height=27
-)
-
-
-clear_api_button.pack(pady=5, padx=10)
-
-
 filter_buttons["NES"] = nes_button
 filter_buttons["SEGA GEN."] = sega_button
 filter_buttons["SNES"] = snes_button
@@ -1696,7 +1673,7 @@ filter_buttons["Atari 2600"] = atari2600_button
 filter_buttons["Sega MS"] = sms_button
 filter_buttons["TG16"] = tg16_button
 filter_buttons["All"] = all_button
-filter_buttons["Reset API"] = clear_api_button
+
 
 
 set_filter_button_styles()
@@ -1742,9 +1719,44 @@ scrollbar.pack(side="right", fill="y")
 
 
 # bottom bar
+
+tool_buttons = {}
+
 bottom_bar = tk.Frame(root, bg="black", height=95)
-bottom_bar.pack(side="bottom", fill="x")
+bottom_bar.pack(fill="x")
 bottom_bar.pack_propagate(False)
+
+
+tools_label = ctk.CTkLabel(
+    bottom_bar,
+    text="Tools",
+    bg_color="#2E2E2E",
+    fg_color="#2E2E2E",
+    text_color="red",
+    font=("TkDefaultFont", 20, "bold"),
+    width=180,
+    height=30
+)
+tools_label.pack(side="left", padx=(20,10), pady=5)
+
+clear_api_button = ctk.CTkButton(
+    bottom_bar,
+    text="Eject API",
+    command=clear_api_key,
+    fg_color="#2E2E2E",
+    hover_color="#1D1D1D",
+    border_width=2,
+    border_color="black",
+    text_color="white",
+    font=("TkDefaultFont", 15, "bold"),
+    corner_radius=0,
+    width=180,
+    height=30
+)
+
+clear_api_button.pack(side="left", padx=10, pady=5)
+
+tool_buttons["Reset API"] = clear_api_button
 
 # ------------------ INIT ------------------
 init_db()
