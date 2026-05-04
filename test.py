@@ -1,3 +1,20 @@
+# -----------------------------------------
+# Classic Games Browser
+# Description: GUI app that searches a game database API,
+# caches results locally using SQLite, and displays results
+# with filters, sorting, and images.
+#
+# Features:
+# - API search with caching
+# - Platform filtering
+# - Sorting results
+# - Image + slideshow display
+# - Local database storage
+#
+# Authors: Teresa Newman and Wyatt M Cox
+# -----------------------------------------
+
+# --- IMPORTS ---
 import json
 import os
 import time
@@ -13,24 +30,19 @@ from io import BytesIO
 
 
 # --- COLORS ---
+# UI color scheme used throughout the app
 BG = "#BCBCBC"
 FG = "black"
+
 # --- API CONFIG ---
-# Current API key: Teresa's
-#API_KEY = '1b2b1e65b282ff78c4345dfc6dccc509bd50baeeb7b00abfb7533c23f15a962c' #<- change the number between the '' to your API Key
-BASE_URL = 'https://api.thegamesdb.net/'
-DB_PATH = "gamesdb_cache.db"
-THIRTY_DAYS = 60 * 60 * 24 * 30
-
-
-
+# Stores API URL, database path, and cache expiration times
+BASE_URL = 'https://api.thegamesdb.net/' 
+DB_PATH = "gamesdb_cache.db" # SQLite database file path
+THIRTY_DAYS = 60 * 60 * 24 * 30 # Cache expiration time
 
 SEARCH_TTL = THIRTY_DAYS
 DETAIL_TTL = THIRTY_DAYS
 LOOKUP_TTL = THIRTY_DAYS
-
-
-
 
 API_TTL = THIRTY_DAYS
 IMAGE_CACHE_DIR = "image_cache"
@@ -42,10 +54,8 @@ current_gallery_label = None
 current_gallery_caption = None
 current_gallery_after_id = None
 
-
-
-
 # --- GLOBAL STATE ---
+# Tracks runtime state like filters, results, and UI state
 platform_cache = {}
 genre_cache = {}
 last_search_results = []
@@ -58,13 +68,12 @@ filter_buttons = {}
 
 # ------------------ DATA ------------------
 
-
+# Creates and returns a connection to the SQLite database
 def get_db_connection():
     return sqlite3.connect(DB_PATH)
 
-
-
-
+# Initializes database tables if they do not exist
+# Also ensures required columns are present
 def init_db():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -77,7 +86,7 @@ def init_db():
         key TEXT NOT NULL,
         updated_at INTEGER NOT NULL
     )
-    """)
+    """) # Stores API key locally
     cur.execute("""
         CREATE TABLE IF NOT EXISTS search_index (
             q TEXT PRIMARY KEY,
@@ -109,7 +118,7 @@ def init_db():
     """)
 
 
-    cur.execute("PRAGMA table_info(games)")
+    cur.execute("PRAGMA table_info(games)") # Get column info
     game_columns = {row[1] for row in cur.fetchall()}
     if "has_details" not in game_columns:
         cur.execute("ALTER TABLE games ADD COLUMN has_details INTEGER NOT NULL DEFAULT 0")
@@ -120,7 +129,7 @@ def init_db():
 
 
 
-
+# Retrieves stored API key if it exists and is still valid
 def get_cached_api_key():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -128,14 +137,14 @@ def get_cached_api_key():
     row = cur.fetchone()
     conn.close()
 
-
+    
     if row and is_fresh(row[1], API_TTL):
         return row[0]
     return None
 
 
 
-
+# Saves API key to database with current timestamp
 def save_api_key(key):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -147,6 +156,7 @@ def save_api_key(key):
     conn.commit()
     conn.close()
    
+# Opens a popup window prompting user to enter API key
 def prompt_for_api_key():
     popup = tk.Toplevel(root)
     popup.title("API Key Required")
@@ -161,7 +171,7 @@ def prompt_for_api_key():
     entry = tk.Entry(popup, width=50)
     entry.pack(pady=5)
 
-
+# Handles API key submission and validation
     def submit():
         global API_KEY
         key = entry.get().strip()
@@ -181,7 +191,7 @@ def prompt_for_api_key():
 
 
 
-
+# Checks if API key exists before allowing API calls
 def require_api_key():
     if not API_KEY:
         messagebox.showerror("API Key Missing", "Please enter API key first")
@@ -190,7 +200,7 @@ def require_api_key():
 
 
 
-
+# Removes stored API key and forces re-entry
 def clear_api_key():
     global API_KEY
 
@@ -212,7 +222,7 @@ def clear_api_key():
 
 
 
-
+# Checks if cached data is still valid based on TTL
 def is_fresh(updated_at, ttl):
     return (int(time.time()) - updated_at) < ttl
 
@@ -233,7 +243,7 @@ def get_cached_search(query):
 
 
 
-
+# Saves search results into cache database
 def save_search(query, games):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -246,7 +256,7 @@ def save_search(query, games):
 
 
 
-
+# Retrieves cached game details if available
 def get_cached_game(game_id):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -261,7 +271,7 @@ def get_cached_game(game_id):
 
 
 
-
+# Saves or updates game data in cache
 def save_game(game, has_details=False):
     game_id = game.get("id")
     if game_id is None:
@@ -294,7 +304,7 @@ def save_game(game, has_details=False):
 
 
 
-
+# Loads cached platform/genre lookup tables
 def get_cached_lookup(table_name, ttl):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -316,7 +326,7 @@ def get_cached_lookup(table_name, ttl):
 
 
 
-
+# Saves lookup data (platforms/genres) into database
 def save_lookup(table_name, data_dict):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -335,11 +345,11 @@ def save_lookup(table_name, data_dict):
 
 
 
-
+# Ensures image cache directory exists
 def ensure_image_cache_dir():
     os.makedirs(IMAGE_CACHE_DIR, exist_ok=True)
 
-
+# Deletes corrupted or invalid cached image
 def remove_cached_image(image_path):
     try:
         if os.path.exists(image_path):
@@ -347,7 +357,7 @@ def remove_cached_image(image_path):
     except OSError:
         pass
 
-
+# Loads image from disk and resizes it for display
 def load_photo_image_from_path(image_path, max_size):
     try:
         with Image.open(image_path) as pil_image:
@@ -357,7 +367,7 @@ def load_photo_image_from_path(image_path, max_size):
         remove_cached_image(image_path)
         return None
 
-
+# Converts downloaded image bytes into displayable format
 def load_photo_image_from_bytes(image_bytes, max_size):
     try:
         with Image.open(BytesIO(image_bytes)) as pil_image:
@@ -368,7 +378,7 @@ def load_photo_image_from_bytes(image_bytes, max_size):
 
 
 
-
+# Stops active image slideshow and resets state
 def stop_detail_slideshow():
     global current_gallery_images, current_gallery_items, current_gallery_index
     global current_gallery_label, current_gallery_caption, current_gallery_after_id
@@ -390,7 +400,7 @@ def stop_detail_slideshow():
 
 
 
-
+# Loads platform list from API or cache
 def load_platforms():
     global platform_cache
 
@@ -411,11 +421,11 @@ def load_platforms():
     except Exception as e:
         print("Error loading platforms:", e)
 
-
+# Converts platform ID to readable name
 def get_platform_name(platform_id):
     return platform_cache.get(platform_id, "Unknown")
 
-
+# Loads genre list from API or cache
 def load_genres():
     global genre_cache
 
@@ -436,7 +446,7 @@ def load_genres():
     except Exception as e:
         print("Error loading genres:", e)
 
-
+# Converts genre IDs into readable string
 def get_genres_text(raw):
     if not raw:
         return "Unknown"
@@ -449,7 +459,7 @@ def get_genres_text(raw):
 
 # ------------------ FILTER ------------------
 
-
+# Finds platform ID based on name match
 def find_platform_id_by_name(search_name):
     search_lower = search_name.lower().strip()
 
@@ -468,7 +478,7 @@ def find_platform_id_by_name(search_name):
 
     return None
 
-
+# Updates filter button UI styling based on active filter
 def set_filter_button_styles():
     normal_fg = "#000000"
     normal_text = "white"
@@ -496,7 +506,7 @@ def set_filter_button_styles():
 
 
 
-
+# Applies platform filter to search results
 def apply_filter(filter_name, platform_keyword=None):
     global active_filter
 
@@ -538,7 +548,7 @@ def apply_filter(filter_name, platform_keyword=None):
         tk.Label(results_inner_frame, text="Platform not found.", bg=BG, fg=FG).pack()
         return
 
-
+# Filter results by platform ID
     filtered = [g for g in last_search_results if g.get("platform") == pid]
 
 
@@ -550,7 +560,7 @@ def apply_filter(filter_name, platform_keyword=None):
 
 
 
-
+# Wrapper function for platform filtering buttons
 def filter_by_platform(filter_name, platform_keyword):
     apply_filter(filter_name, platform_keyword)
 
@@ -561,7 +571,7 @@ def filter_by_platform(filter_name, platform_keyword):
 
 # ------------------ UI ROW ------------------
 
-
+# Builds a single clickable game result row in UI
 def build_result_row(game):
     game_id = game.get("id")
     title = game.get("game_title", "N/A")
@@ -598,13 +608,13 @@ def build_result_row(game):
 
 
 
-
+    # When user clicks a game → load details view
     def on_click(e=None):
         fetch_game_details(game_id)
 
 
 
-
+    # Highlight row on hover
     def on_enter(e=None):
         row.config(bg=hover_bg)
         title_lbl.config(bg=hover_bg)
@@ -612,7 +622,7 @@ def build_result_row(game):
 
 
 
-
+# Reset row color when mouse leaves
     def on_leave(e=None):
         row.config(bg=normal_bg)
         title_lbl.config(bg=normal_bg)
@@ -638,14 +648,14 @@ def build_result_row(game):
 
 # ------------------ SEARCH ------------------
 
-
+# Handles search input, API request, caching, and result rendering
 def fetch_game_data_by_name():
     global last_search_results, is_showing_detail, active_filter
     if not require_api_key():
         return
 
 
-    name = entry_name.get().strip()
+    name = entry_name.get().strip() # Get user input from textbox
     if not name:
         messagebox.showwarning("Input Error", "Enter a game name")
         return
@@ -656,10 +666,10 @@ def fetch_game_data_by_name():
 
 
     try:
-        games = get_cached_search(query)
+        games = get_cached_search(query) # Try loading cached results first
 
 
-        if games is None:
+        if games is None: # If not cached, fetch from API
             url = f"{BASE_URL}v1/Games/ByGameName?apikey={API_KEY}&name={name}"
             resp = requests.get(url)
             data = resp.json()
@@ -712,7 +722,7 @@ def build_image_url(base_url, image_path):
 
 
 
-
+# Extracts box art image URL from API response
 def get_boxart_url(api_data, game_id):
     include = api_data.get("include", {}) or api_data.get("data", {}).get("include", {})
     boxart = include.get("boxart", {})
@@ -758,7 +768,7 @@ def get_boxart_url(api_data, game_id):
 
 
 
-
+# Retrieves additional game media (screenshots, artwork)
 def get_game_media_urls(game_id):
     url = f"{BASE_URL}v1/Games/Images"
     resp = requests.get(
@@ -855,7 +865,7 @@ def should_refresh_media_items(media_items):
 
 
 
-
+# Downloads and caches box art image locally
 def load_boxart_image(game_id, image_url, max_size=(300, 420)):
     if not game_id or not image_url:
         return None
@@ -945,7 +955,7 @@ def load_cached_detail_image(game_id, image_url, cache_name, max_size):
 
 
 
-
+# Starts automatic image slideshow in game detail view
 def start_detail_slideshow(parent, game_id, image_items, row_num, max_size=(450, 300), delay_ms=2200):
     global current_gallery_images, current_gallery_items, current_gallery_index
     global current_gallery_label, current_gallery_caption, current_gallery_after_id
@@ -1152,7 +1162,7 @@ def fetch_game_details(game_id):
 
 
 
-
+# Sorts search results based on selected dropdown option
 def apply_sort(option):
     global last_search_results
 
@@ -1191,7 +1201,7 @@ def apply_sort(option):
 
 
 
-
+# Rebuilds results list after sorting or filtering
 def rebuild_results_only():
     for w in results_inner_frame.winfo_children():
         w.destroy()
@@ -1238,7 +1248,7 @@ def rebuild_results_only():
         for game in filtered:
             build_result_row(game)
 
-
+# Returns from detail view back to search results
 def show_previous_results():
     global is_showing_detail
 
@@ -1251,7 +1261,7 @@ def show_previous_results():
     rebuild_results_only()
 # ------------------ CLEAR ------------------
 
-
+# Clears search field and resets UI state
 def clear_search():
     global active_filter
 
@@ -1265,6 +1275,7 @@ def clear_search():
     set_filter_button_styles()
     update_status_square(False)
 
+# Updates status indicator (green = results, red = empty)
 def update_status_square(has_results):
     if has_results:
         status_square.config(bg="green")
@@ -1274,10 +1285,11 @@ def update_status_square(has_results):
 
 
 
-# ------------------ GUI ------------------
+# ------------------ GUI SETUP ------------------
+# Creates main window and all UI components
 
 
-root = tk.Tk()
+root = tk.Tk() # Main application window
 root.title("Classic Games Browser")
 root.geometry("900x715")
 root.minsize(900, 775)
@@ -1352,7 +1364,7 @@ Entry_container.pack(side="left", padx=5)
 tk.Label(Entry_container, text="Search:", bg=BG, fg=FG).pack(side="left",  padx=(10, 5))
 
 
-entry_name = tk.Entry(Entry_container, width=36)
+entry_name = tk.Entry(Entry_container, width=36)  # Search input box
 entry_name.pack(side="left", padx=(5,20), pady = 15)
 
 
@@ -1386,8 +1398,8 @@ search_button = ctk.CTkButton(buttons_container, text="Start",
                                bg_color=BG, fg_color=BG, hover_color="#585858",
                                text_color="red", font=("TkDefaultFont", 13, "bold"),  
                                border_width=2, border_color="black",
-                               width=90, height=30)
-search_button.grid(row=0, column=0, padx=5, pady=5)
+                               width=90, height=30) # Button to trigger search
+search_button.grid(row=0, column=0, padx=5, pady=5) # Button to trigger search
 
 
 
@@ -1758,7 +1770,9 @@ clear_api_button.pack(side="left", padx=10, pady=5)
 
 tool_buttons["Reset API"] = clear_api_button
 
-# ------------------ INIT ------------------
+
+# ------------------ INITIALIZATION ------------------
+# Set up database, load cached data, and start app
 init_db()
 load_platforms()
 load_genres()
